@@ -16,7 +16,7 @@ endif
 ######################
 # docker operations
 
-IMAGES=fb-kpimon-xapp
+IMAGES=fb-kpimon-xapp fb-ah-xapp ah-eson-test-server
 
 define IMAGE_HELP
 
