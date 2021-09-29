@@ -40,3 +40,25 @@ image/%:
 
 _IMAGES=$(patsubst %,image/%,$(IMAGES))
 image/all: $(_IMAGES)
+images: $(_IMAGES)
+
+build-tools: # @HELP install the ONOS build tools if needed
+	@if [ ! -d "../build-tools" ]; then cd .. && git clone https://github.com/onosproject/build-tools.git; fi
+
+publish: # @HELP publish version on github and dockerhub
+	./../build-tools/publish-version fb-ah-xapp/${VERSION} onosproject/fb-ah-xapp
+	./../build-tools/publish-version ah-eson-test-server/${VERSION} onosproject/ah-eson-test-server
+	./../build-tools/publish-version fb-kpimon-xapp/${VERSION} onosproject/fb-kpimon-xapp
+
+jenkins-publish: build-tools # @HELP Jenkins calls this to publish artifacts
+	./build/bin/push-images
+	VERSIONFILE=VERSION.fb-ah-xapp ../build-tools/release-merge-commit
+    VERSIONFILE=VERSION.ah-eson-test-server ../build-tools/release-merge-commit
+    VERSIONFILE=VERSION.fb-kpimon-xapp ../build-tools/release-merge-commit
+
+jenkins-test:  # @HELP run the unit tests and source code validation producing a junit style report for Jenkins
+jenkins-test: build-tools
+
+test: build-tools
+
+
