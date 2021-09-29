@@ -1,0 +1,14 @@
+#!/bin/bash
+set -e
+
+echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+make images
+
+docker tag ah-eson-test-server:latest onosproject/ah-eson-test-server:latest
+docker tag fb-ah-xapp:latest onosproject/fb-ah-xapp:latest
+docker tag fb-kpimon-xapp:latest onosproject/fb-kpimon-xapp:latest
+
+docker push onosproject/ah-eson-test-server:latest
+docker push onosproject/fb-ah-xapp:latest
+docker push onosproject/fb-kpimon-xapp:latest
+
