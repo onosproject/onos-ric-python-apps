@@ -46,9 +46,9 @@ build-tools: # @HELP install the ONOS build tools if needed
 	@if [ ! -d "../build-tools" ]; then cd .. && git clone https://github.com/onosproject/build-tools.git; fi
 
 publish: # @HELP publish version on github and dockerhub
-	./../build-tools/publish-version fb-ah-xapp/${VERSION} onosproject/fb-ah-xapp
-	./../build-tools/publish-version ah-eson-test-server/${VERSION} onosproject/ah-eson-test-server
-	./../build-tools/publish-version fb-kpimon-xapp/${VERSION} onosproject/fb-kpimon-xapp
+	if ! grep dev VERSION.fb-ah-xapp; then ./../build-tools/publish-version fb-ah-xapp/${VERSION} onosproject/fb-ah-xapp; fi
+	if ! grep dev VERSION.ah-eson-test-server; then ./../build-tools/publish-version ah-eson-test-server/${VERSION} onosproject/ah-eson-test-server; fi
+	if ! grep dev VERSION.fb-kpimon-xapp; then ./../build-tools/publish-version fb-kpimon-xapp/${VERSION} onosproject/fb-kpimon-xapp; fi
 
 jenkins-publish: build-tools # @HELP Jenkins calls this to publish artifacts
 	./build/bin/push-images
