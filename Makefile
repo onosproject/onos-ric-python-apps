@@ -53,8 +53,8 @@ publish: # @HELP publish version on github and dockerhub
 jenkins-publish: build-tools # @HELP Jenkins calls this to publish artifacts
 	./build/bin/push-images
 	VERSIONFILE=VERSION.fb-ah-xapp ../build-tools/release-merge-commit
-    VERSIONFILE=VERSION.ah-eson-test-server ../build-tools/release-merge-commit
-    VERSIONFILE=VERSION.fb-kpimon-xapp ../build-tools/release-merge-commit
+	VERSIONFILE=VERSION.ah-eson-test-server ../build-tools/release-merge-commit
+	VERSIONFILE=VERSION.fb-kpimon-xapp ../build-tools/release-merge-commit
 
 jenkins-test:  # @HELP run the unit tests and source code validation producing a junit style report for Jenkins
 jenkins-test: build-tools
