@@ -5,7 +5,7 @@ import argparse
 import asyncio
 import json
 import logging
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 from aiohttp import web
 
@@ -62,8 +62,8 @@ async def async_main(
 ) -> None:
     async with e2_client, sdl_client:
         with AirhopEsonClient(args.eson_endpoint) as eson_client:
-            kpi: Dict[str, Dict[str, int]] = {}
-            # kpi = {cid: {metric_name: metric_value, ...}, ...}
+            kpi: Dict[Tuple[str, str], Dict[str, int]] = {}
+            # kpi = {(e2node_id, cid): {metric_name: metric_value, ...}, ...}
 
             asyncio.create_task(
                 # query changes to pci via subscribe()
@@ -77,7 +77,7 @@ async def async_main(
             )
             asyncio.create_task(
                 # MLB: update capacity
-                update_eson_capacity(e2_client, eson_client, kpi),
+                update_eson_capacity(e2_client, eson_client, kpi, ct),
             )
             asyncio.create_task(
                 # MLB: subscription
@@ -577,7 +577,8 @@ async def update_pci(
 async def update_eson_capacity(
     e2_client: sdk.E2Client,
     eson_client: AirhopEsonClient,
-    kpi: Dict[str, Dict[str, int]],
+    kpi: Dict[Tuple[str, str], Dict[str, int]],
+    cells_tracker: CellsTracker,
 ) -> None:
     """
     update eson capacity for each cell
@@ -589,8 +590,13 @@ async def update_eson_capacity(
     logging.info(f"MLB: monitoring kpi to report capacity")
     while True:
         coros = []
-        for cid, metrics in kpi.items():
-            ncgi = int(cid, 16)
+        for (e2_node_id, cid_str), metrics in kpi.items():
+            cid = int(cid_str, 16)
+            ncgi = cells_tracker.find_ncgi(e2_node_id, cid)
+
+            if ncgi is None:
+                logging.warning(f"MLB: unable to find ncgi for cid 0x{cid:x} '")
+
             conn_mean = metrics.get("RRC.Conn.Avg", None)
             if conn_mean is None:
                 conn_mean = metrics.get("RRC.ConnMean", None)

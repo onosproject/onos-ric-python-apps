@@ -45,7 +45,7 @@ async def subscribe(
     e2_node_id: str,
     e2_node: E2Node,
     report_style: KpmReportStyle,
-    kpi: Dict[str, Dict[str, int]],
+    kpi: Dict[Tuple[str, str], Dict[str, int]],
 ) -> None:
     # Save subscription ID -> cell global ID
     sub_map = {}
@@ -186,7 +186,7 @@ async def subscribe(
                 metrics[metric_name] = metric_value
 
         # track metrics per cell id
-        kpi[cellid] = metrics
+        kpi[(e2_node_id, cellid)] = metrics
 
 
 async def track_kpi(
@@ -194,7 +194,7 @@ async def track_kpi(
     sdl_client: sdk.SDLClient,
     e2_node_id: str,
     e2_node: E2Node,
-    kpi: Dict[str, Dict[str, int]],
+    kpi: Dict[Tuple[str, str], Dict[str, int]],
 ) -> None:
     """
     kpi = {cid: {metric_name: metric_value, ...}, ...}

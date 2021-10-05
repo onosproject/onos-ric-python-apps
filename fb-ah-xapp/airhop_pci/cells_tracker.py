@@ -311,3 +311,21 @@ class CellsTracker:
         throws exception if ncgi had not been seen before:
         """
         return self.ncgi_cells_map[ncgi].e2_node_id
+
+    def find_ncgi(self, e2_node_id: str, nci: int) -> Optional[int]:
+        """
+        find ncgi given e2_node_id and nci, returns None if not found
+
+        nci is sometimes called cell id
+        cell id is in the rc-pre service model as "NRCellIdentity"
+        """
+        nci_mask = (0x1 << CELLID_BITWIDTH) - 1
+        for ncgi, state in self.ncgi_cells_map.items():
+            if state.e2_node_id != e2_node_id:
+                continue
+            logging.info(
+                f"ncgi:0x{ncgi:x}: state.nci:0x{state.nci:x} ==? nci:0x{nci:x}"
+            )
+            if state.nci == nci:
+                return ncgi
+        return None
