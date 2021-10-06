@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import List
 
 import betterproto
+from betterproto.grpc.grpclib_server import ServiceBase
 
 
 class TestCondExpression(betterproto.Enum):
@@ -85,9 +86,6 @@ class Eutracgi(betterproto.Message):
     p_lmn_identity: "PlmnIdentity" = betterproto.message_field(1)
     e_utracell_identity: "EutracellIdentity" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class Nrcgi(betterproto.Message):
@@ -95,9 +93,6 @@ class Nrcgi(betterproto.Message):
 
     p_lmn_identity: "PlmnIdentity" = betterproto.message_field(1)
     n_rcell_identity: "NrcellIdentity" = betterproto.message_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -107,9 +102,6 @@ class CellGlobalId(betterproto.Message):
     nr_cgi: "Nrcgi" = betterproto.message_field(1, group="cell_global_id")
     e_utra_cgi: "Eutracgi" = betterproto.message_field(2, group="cell_global_id")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class Snssai(betterproto.Message):
@@ -118,18 +110,12 @@ class Snssai(betterproto.Message):
     s_st: bytes = betterproto.bytes_field(1)
     s_d: bytes = betterproto.bytes_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class FiveQi(betterproto.Message):
     """range of Integer from e2sm_kpm_v2.0.2-rm.asn:47{FiveQI}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -138,18 +124,12 @@ class Qci(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class Qfi(betterproto.Message):
     """range of Integer from e2sm_kpm_v2.0.2-rm.asn:51{QFI}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -158,18 +138,12 @@ class Arp(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GranularityPeriod(betterproto.Message):
     """range of Integer from e2sm_kpm_v2.0.2-rm.asn:65{GranularityPeriod}"""
 
     value: int = betterproto.uint32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -183,18 +157,12 @@ class MeasurementType(betterproto.Message):
         2, group="measurement_type"
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MeasurementTypeId(betterproto.Message):
     """range of Integer from e2sm_kpm_v2.0.2-rm.asn:73{MeasurementTypeID}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -219,18 +187,12 @@ class MeasurementLabel(betterproto.Message):
     pre_label_override: "PreLabelOverride" = betterproto.enum_field(16)
     start_end_ind: "StartEndInd" = betterproto.enum_field(17)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class SubscriptionId(betterproto.Message):
     """range of Integer from e2sm_kpm_v2.0.2-rm.asn:96{SubscriptionID}"""
 
     value: int = betterproto.int64_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -240,9 +202,6 @@ class TestCondInfo(betterproto.Message):
     test_type: "TestCondType" = betterproto.message_field(1)
     test_expr: "TestCondExpression" = betterproto.enum_field(2)
     test_value: "TestCondValue" = betterproto.message_field(3)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -256,9 +215,6 @@ class TestCondType(betterproto.Message):
     r_srp: "Rsrp" = betterproto.enum_field(5, group="test_cond_type")
     r_srq: "Rsrq" = betterproto.enum_field(6, group="test_cond_type")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class TestCondValue(betterproto.Message):
@@ -270,9 +226,6 @@ class TestCondValue(betterproto.Message):
     value_bit_s: "BitString" = betterproto.message_field(4, group="test_cond_value")
     value_oct_s: str = betterproto.string_field(5, group="test_cond_value")
     value_prt_s: str = betterproto.string_field(6, group="test_cond_value")
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -288,9 +241,6 @@ class GlobalKpmnodeId(betterproto.Message):
     )
     e_nb: "GlobalKpmnodeEnbId" = betterproto.message_field(4, group="global_kpmnode_id")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GlobalKpmnodeGnbId(betterproto.Message):
@@ -300,9 +250,6 @@ class GlobalKpmnodeGnbId(betterproto.Message):
     g_nb_cu_up_id: "GnbCuUpId" = betterproto.message_field(2)
     g_nb_du_id: "GnbDuId" = betterproto.message_field(3)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GlobalgNbId(betterproto.Message):
@@ -311,18 +258,12 @@ class GlobalgNbId(betterproto.Message):
     plmn_id: "PlmnIdentity" = betterproto.message_field(1)
     gnb_id: "GnbIdChoice" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GnbCuUpId(betterproto.Message):
     """range of Integer from e2sm_kpm_v2.0.2-rm.asn:157{GNB-CU-UP-ID}"""
 
     value: int = betterproto.int64_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -331,18 +272,12 @@ class GnbDuId(betterproto.Message):
 
     value: int = betterproto.int64_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GnbIdChoice(betterproto.Message):
     """sequence from e2sm_kpm_v2.0.2-rm.asn:162{GNB-ID-Choice}"""
 
     gnb_id: "BitString" = betterproto.message_field(1, group="gnb_id_choice")
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -353,9 +288,6 @@ class GlobalKpmnodeEnGnbId(betterproto.Message):
     g_nb_cu_up_id: "GnbCuUpId" = betterproto.message_field(2)
     g_nb_du_id: "GnbDuId" = betterproto.message_field(3)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GlobalenGnbId(betterproto.Message):
@@ -364,18 +296,12 @@ class GlobalenGnbId(betterproto.Message):
     p_lmn_identity: "PlmnIdentity" = betterproto.message_field(1)
     g_nb_id: "EngnbId" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class EngnbId(betterproto.Message):
     """sequence from e2sm_kpm_v2.0.2-rm.asn:180{ENGNB-ID}"""
 
     g_nb_id: "BitString" = betterproto.message_field(1, group="engnb_id")
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -384,9 +310,6 @@ class GlobalKpmnodeNgEnbId(betterproto.Message):
 
     global_ng_e_nb_id: "GlobalngeNbId" = betterproto.message_field(1)
     g_nb_du_id: "GnbDuId" = betterproto.message_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -398,9 +321,6 @@ class GlobalngeNbId(betterproto.Message):
     short_macro_e_nb_id: "BitString" = betterproto.message_field(3)
     long_macro_e_nb_id: "BitString" = betterproto.message_field(4)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class EnbIdChoice(betterproto.Message):
@@ -410,18 +330,12 @@ class EnbIdChoice(betterproto.Message):
     enb_id_shortmacro: "BitString" = betterproto.message_field(2, group="enb_id_choice")
     enb_id_longmacro: "BitString" = betterproto.message_field(3, group="enb_id_choice")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GlobalKpmnodeEnbId(betterproto.Message):
     """sequence from e2sm_kpm_v2.0.2-rm.asn:206{GlobalKPMv2node-eNB-ID}"""
 
     global_e_nb_id: "GlobalEnbId" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -431,9 +345,6 @@ class GlobalEnbId(betterproto.Message):
     p_lmn_identity: "PlmnIdentity" = betterproto.message_field(1)
     e_nb_id: "EnbId" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class EnbId(betterproto.Message):
@@ -441,9 +352,6 @@ class EnbId(betterproto.Message):
 
     macro_e_nb_id: "BitString" = betterproto.message_field(1, group="enb_id")
     home_e_nb_id: "BitString" = betterproto.message_field(2, group="enb_id")
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -455,18 +363,12 @@ class RanfunctionName(betterproto.Message):
     ran_function_description: str = betterproto.string_field(3)
     ran_function_instance: int = betterproto.int32_field(4)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RicStyleType(betterproto.Message):
     """range of Integer from e2sm_kpm_v2.0.2-rm.asn:234{RIC-Style-Type}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -475,18 +377,12 @@ class RicFormatType(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxnoofKpmnodes(betterproto.Message):
     """constant Integer from e2sm_kpm_v2.0.2-rm.asn:242{-}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -495,18 +391,12 @@ class MaxnoofCells(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxnoofRicstyles(betterproto.Message):
     """constant Integer from e2sm_kpm_v2.0.2-rm.asn:244{-}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -515,18 +405,12 @@ class MaxnoofMeasurementInfo(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxnoofLabelInfo(betterproto.Message):
     """constant Integer from e2sm_kpm_v2.0.2-rm.asn:246{-}"""
 
     value: int = betterproto.int64_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -535,18 +419,12 @@ class MaxnoofMeasurementRecord(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxnoofMeasurementValue(betterproto.Message):
     """constant Integer from e2sm_kpm_v2.0.2-rm.asn:248{-}"""
 
     value: int = betterproto.int64_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -555,9 +433,6 @@ class MaxnoofConditionInfo(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxnoofUeid(betterproto.Message):
@@ -565,18 +440,12 @@ class MaxnoofUeid(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MeasurementInfoList(betterproto.Message):
     """sequence from e2sm_kpm_v2.0.2-rm.asn:255{MeasurementInfoList}"""
 
     value: List["MeasurementInfoItem"] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -586,18 +455,12 @@ class MeasurementInfoItem(betterproto.Message):
     meas_type: "MeasurementType" = betterproto.message_field(1)
     label_info_list: "LabelInfoList" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class LabelInfoList(betterproto.Message):
     """sequence from e2sm_kpm_v2.0.2-rm.asn:263{LabelInfoList}"""
 
     value: List["LabelInfoItem"] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -606,18 +469,12 @@ class LabelInfoItem(betterproto.Message):
 
     meas_label: "MeasurementLabel" = betterproto.message_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MeasurementData(betterproto.Message):
     """sequence from e2sm_kpm_v2.0.2-rm.asn:270{MeasurementData}"""
 
     value: List["MeasurementDataItem"] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -627,18 +484,12 @@ class MeasurementDataItem(betterproto.Message):
     meas_record: "MeasurementRecord" = betterproto.message_field(1)
     incomplete_flag: "IncompleteFlag" = betterproto.enum_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MeasurementRecord(betterproto.Message):
     """sequence from e2sm_kpm_v2.0.2-rm.asn:278{MeasurementRecord}"""
 
     value: List["MeasurementRecordItem"] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -649,9 +500,6 @@ class MeasurementRecordItem(betterproto.Message):
     real: float = betterproto.double_field(2, group="measurement_record_item")
     no_value: int = betterproto.int32_field(3, group="measurement_record_item")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MeasurementInfoActionList(betterproto.Message):
@@ -660,9 +508,6 @@ class MeasurementInfoActionList(betterproto.Message):
     """
 
     value: List["MeasurementInfoActionItem"] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -674,18 +519,12 @@ class MeasurementInfoActionItem(betterproto.Message):
     meas_name: "MeasurementTypeName" = betterproto.message_field(1)
     meas_id: "MeasurementTypeId" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MeasurementCondList(betterproto.Message):
     """sequence from e2sm_kpm_v2.0.2-rm.asn:295{MeasurementCondList}"""
 
     value: List["MeasurementCondItem"] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -695,18 +534,12 @@ class MeasurementCondItem(betterproto.Message):
     meas_type: "MeasurementType" = betterproto.message_field(1)
     matching_cond: "MatchingCondList" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MeasurementCondUeidList(betterproto.Message):
     """sequence from e2sm_kpm_v2.0.2-rm.asn:303{MeasurementCondUEidList}"""
 
     value: List["MeasurementCondUeidItem"] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -717,18 +550,12 @@ class MeasurementCondUeidItem(betterproto.Message):
     matching_cond: "MatchingCondList" = betterproto.message_field(2)
     matching_ueid_list: "MatchingUeidList" = betterproto.message_field(3)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MatchingCondList(betterproto.Message):
     """sequence from e2sm_kpm_v2.0.2-rm.asn:312{MatchingCondList}"""
 
     value: List["MatchingCondItem"] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -742,9 +569,6 @@ class MatchingCondItem(betterproto.Message):
         2, group="matching_cond_item"
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MatchingUeidList(betterproto.Message):
@@ -752,18 +576,12 @@ class MatchingUeidList(betterproto.Message):
 
     value: List["MatchingUeidItem"] = betterproto.message_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MatchingUeidItem(betterproto.Message):
     """sequence from e2sm_kpm_v2.0.2-rm.asn:321{MatchingUEidItem}"""
 
     ue_id: "UeIdentity" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -776,9 +594,6 @@ class E2SmKpmEventTriggerDefinition(betterproto.Message):
         betterproto.message_field(1, group="e2_sm_kpm_event_trigger_definition")
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmKpmEventTriggerDefinitionFormat1(betterproto.Message):
@@ -788,9 +603,6 @@ class E2SmKpmEventTriggerDefinitionFormat1(betterproto.Message):
     """
 
     reporting_period: int = betterproto.uint32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -810,9 +622,6 @@ class E2SmKpmActionDefinition(betterproto.Message):
         betterproto.message_field(4, group="e2_sm_kpm_action_definition")
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmKpmActionDefinitionFormat1(betterproto.Message):
@@ -826,9 +635,6 @@ class E2SmKpmActionDefinitionFormat1(betterproto.Message):
     granul_period: "GranularityPeriod" = betterproto.message_field(3)
     subscript_id: "SubscriptionId" = betterproto.message_field(4)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmKpmActionDefinitionFormat2(betterproto.Message):
@@ -839,9 +645,6 @@ class E2SmKpmActionDefinitionFormat2(betterproto.Message):
 
     ue_id: "UeIdentity" = betterproto.message_field(1)
     subscript_info: "E2SmKpmActionDefinitionFormat1" = betterproto.message_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -856,9 +659,6 @@ class E2SmKpmActionDefinitionFormat3(betterproto.Message):
     granul_period: "GranularityPeriod" = betterproto.message_field(3)
     subscript_id: "SubscriptionId" = betterproto.message_field(4)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmKpmIndicationHeader(betterproto.Message):
@@ -869,9 +669,6 @@ class E2SmKpmIndicationHeader(betterproto.Message):
     indication_header_format1: "E2SmKpmIndicationHeaderFormat1" = (
         betterproto.message_field(1, group="e2_sm_kpm_indication_header")
     )
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -888,9 +685,6 @@ class E2SmKpmIndicationHeaderFormat1(betterproto.Message):
     vendor_name: str = betterproto.string_field(5)
     kpm_node_id: "GlobalKpmnodeId" = betterproto.message_field(6)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmKpmIndicationMessage(betterproto.Message):
@@ -904,9 +698,6 @@ class E2SmKpmIndicationMessage(betterproto.Message):
     indication_message_format2: "E2SmKpmIndicationMessageFormat2" = (
         betterproto.message_field(2, group="e2_sm_kpm_indication_message")
     )
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -922,9 +713,6 @@ class E2SmKpmIndicationMessageFormat1(betterproto.Message):
     meas_info_list: "MeasurementInfoList" = betterproto.message_field(4)
     meas_data: "MeasurementData" = betterproto.message_field(5)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmKpmIndicationMessageFormat2(betterproto.Message):
@@ -938,9 +726,6 @@ class E2SmKpmIndicationMessageFormat2(betterproto.Message):
     granul_period: "GranularityPeriod" = betterproto.message_field(3)
     meas_cond_ueid_list: "MeasurementCondUeidList" = betterproto.message_field(4)
     meas_data: "MeasurementData" = betterproto.message_field(5)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -957,9 +742,6 @@ class E2SmKpmRanfunctionDescription(betterproto.Message):
     ] = betterproto.message_field(3)
     ric_report_style_list: List["RicReportStyleItem"] = betterproto.message_field(4)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RicKpmnodeItem(betterproto.Message):
@@ -969,9 +751,6 @@ class RicKpmnodeItem(betterproto.Message):
     cell_measurement_object_list: List[
         "CellMeasurementObjectItem"
     ] = betterproto.message_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -983,9 +762,6 @@ class CellMeasurementObjectItem(betterproto.Message):
     cell_object_id: "CellObjectId" = betterproto.message_field(1)
     cell_global_id: "CellGlobalId" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RicEventTriggerStyleItem(betterproto.Message):
@@ -994,9 +770,6 @@ class RicEventTriggerStyleItem(betterproto.Message):
     ric_event_trigger_style_type: "RicStyleType" = betterproto.message_field(1)
     ric_event_trigger_style_name: "RicStyleName" = betterproto.message_field(2)
     ric_event_trigger_format_type: "RicFormatType" = betterproto.message_field(3)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -1010,18 +783,12 @@ class RicReportStyleItem(betterproto.Message):
     ric_indication_header_format_type: "RicFormatType" = betterproto.message_field(5)
     ric_indication_message_format_type: "RicFormatType" = betterproto.message_field(6)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RicStyleName(betterproto.Message):
     """{RIC-Style-Name}"""
 
     value: str = betterproto.string_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -1030,18 +797,12 @@ class CellObjectId(betterproto.Message):
 
     value: str = betterproto.string_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MeasurementTypeName(betterproto.Message):
     """{MeasurementTypeName}"""
 
     value: str = betterproto.string_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -1050,18 +811,12 @@ class UeIdentity(betterproto.Message):
 
     value: str = betterproto.string_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class PlmnIdentity(betterproto.Message):
     """{PLMN-Identity}"""
 
     value: bytes = betterproto.bytes_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -1070,18 +825,12 @@ class TimeStamp(betterproto.Message):
 
     value: bytes = betterproto.bytes_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class EutracellIdentity(betterproto.Message):
     """{EUTRACellIdentity}"""
 
     value: "BitString" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -1090,9 +839,6 @@ class NrcellIdentity(betterproto.Message):
 
     value: "BitString" = betterproto.message_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class BitString(betterproto.Message):
@@ -1100,6 +846,3 @@ class BitString(betterproto.Message):
 
     value: bytes = betterproto.bytes_field(1)
     len: int = betterproto.uint32_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()

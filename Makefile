@@ -61,4 +61,12 @@ jenkins-test: build-tools
 
 test: build-tools
 
+SYNCTMP ?= /tmp/onos-ric-python-apps-sync-sm
 
+# manual sync is simpler since onos-e2-sm is a private repo
+.PHONY: sync-sm
+sync-sm: ## clone onos-e2-sm repo and sync python bindings
+	rm -rf ${SYNCTMP}
+	git clone --depth 1 git@github.com:onosproject/onos-e2-sm.git ${SYNCTMP}
+	rm -rf onos_e2_sm
+	cp -r ${SYNCTMP}/python onos_e2_sm

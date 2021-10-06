@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import List
 
 import betterproto
+from betterproto.grpc.grpclib_server import ServiceBase
 
 
 class NiType(betterproto.Enum):
@@ -53,9 +54,6 @@ class GlobalKpmnodeId(betterproto.Message):
     )
     e_nb: "GlobalKpmnodeEnbId" = betterproto.message_field(4, group="global_kpmnode_id")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GlobalKpmnodeGnbId(betterproto.Message):
@@ -65,9 +63,6 @@ class GlobalKpmnodeGnbId(betterproto.Message):
     g_nb_cu_up_id: "GnbCuUpId" = betterproto.message_field(2)
     g_nb_du_id: "GnbDuId" = betterproto.message_field(3)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GlobalgNbId(betterproto.Message):
@@ -76,18 +71,12 @@ class GlobalgNbId(betterproto.Message):
     plmn_id: "PlmnIdentity" = betterproto.message_field(1)
     gnb_id: "GnbIdChoice" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GnbCuUpId(betterproto.Message):
     """range of Integer from e2sm-kpm-v01.00.asn1:44"""
 
     value: int = betterproto.int64_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -96,9 +85,6 @@ class GnbDuId(betterproto.Message):
 
     value: int = betterproto.int64_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GnbIdChoice(betterproto.Message):
@@ -106,18 +92,12 @@ class GnbIdChoice(betterproto.Message):
 
     gnb_id: "BitString" = betterproto.message_field(1, group="gnb_id_choice")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GlobalKpmnodeEnGnbId(betterproto.Message):
     """sequence from e2sm-kpm-v01.00.asn1:55"""
 
     global_g_nb_id: "GlobalenGnbId" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -127,18 +107,12 @@ class GlobalenGnbId(betterproto.Message):
     p_lmn_identity: "PlmnIdentity" = betterproto.message_field(1)
     g_nb_id: "EngnbId" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class EngnbId(betterproto.Message):
     """sequence from e2sm-kpm-v01.00.asn1:66"""
 
     g_nb_id: "BitString" = betterproto.message_field(1, group="engnb_id")
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -147,9 +121,6 @@ class GlobalKpmnodeNgEnbId(betterproto.Message):
 
     global_ng_e_nb_id: "GlobalngeNbId" = betterproto.message_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GlobalngeNbId(betterproto.Message):
@@ -157,9 +128,6 @@ class GlobalngeNbId(betterproto.Message):
 
     plmn_id: "PlmnIdentity" = betterproto.message_field(1)
     enb_id: "EnbIdChoice" = betterproto.message_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -170,18 +138,12 @@ class EnbIdChoice(betterproto.Message):
     enb_id_shortmacro: "BitString" = betterproto.message_field(2, group="enb_id_choice")
     enb_id_longmacro: "BitString" = betterproto.message_field(3, group="enb_id_choice")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GlobalKpmnodeEnbId(betterproto.Message):
     """sequence from e2sm-kpm-v01.00.asn1:93"""
 
     global_e_nb_id: "GlobalEnbId" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -190,9 +152,6 @@ class GlobalEnbId(betterproto.Message):
 
     p_lmn_identity: "PlmnIdentity" = betterproto.message_field(1)
     e_nb_id: "EnbId" = betterproto.message_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -204,9 +163,6 @@ class EnbId(betterproto.Message):
     short_macro_e_nb_id: "BitString" = betterproto.message_field(3, group="enb_id")
     long_macro_e_nb_id: "BitString" = betterproto.message_field(4, group="enb_id")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class Nrcgi(betterproto.Message):
@@ -214,9 +170,6 @@ class Nrcgi(betterproto.Message):
 
     p_lmn_identity: "PlmnIdentity" = betterproto.message_field(1)
     n_rcell_identity: "NrcellIdentity" = betterproto.message_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -226,18 +179,12 @@ class Snssai(betterproto.Message):
     s_st: bytes = betterproto.bytes_field(1)
     s_d: bytes = betterproto.bytes_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxofMessageProtocolTests(betterproto.Message):
     """constant Integer from e2sm-kpm-v01.00.asn1:132"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -246,18 +193,12 @@ class MaxofRicstyles(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxnoofQci(betterproto.Message):
     """constant Integer from e2sm-kpm-v01.00.asn1:134"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -266,18 +207,12 @@ class MaxnoofQoSflows(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxnoofSliceItems(betterproto.Message):
     """constant Integer from e2sm-kpm-v01.00.asn1:136"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -286,18 +221,12 @@ class MaxnoofContainerListItems(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxCellingNbdu(betterproto.Message):
     """constant Integer from e2sm-kpm-v01.00.asn1:138"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -306,18 +235,12 @@ class MaxofContainers(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxPlmn(betterproto.Message):
     """constant Integer from e2sm-kpm-v01.00.asn1:140"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -326,18 +249,12 @@ class RicStyleType(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RicFormatType(betterproto.Message):
     """range of Integer from e2sm-kpm-v01.00.asn1:158"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -348,9 +265,6 @@ class E2SmKpmEventTriggerDefinition(betterproto.Message):
         betterproto.message_field(1, group="e2_sm_kpm_event_trigger_definition")
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmKpmEventTriggerDefinitionFormat1(betterproto.Message):
@@ -358,18 +272,12 @@ class E2SmKpmEventTriggerDefinitionFormat1(betterproto.Message):
 
     policy_test_list: List["TriggerConditionIeItem"] = betterproto.message_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmKpmActionDefinition(betterproto.Message):
     """sequence from e2sm-kpm-v01.00.asn1:175"""
 
     ric_style_type: "RicStyleType" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -379,9 +287,6 @@ class E2SmKpmIndicationHeader(betterproto.Message):
     indication_header_format1: "E2SmKpmIndicationHeaderFormat1" = (
         betterproto.message_field(1, group="e2_sm_kpm_indication_header")
     )
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -395,9 +300,6 @@ class E2SmKpmIndicationHeaderFormat1(betterproto.Message):
     five_qi: int = betterproto.int32_field(5)
     qci: int = betterproto.int32_field(6)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmKpmIndicationMessage(betterproto.Message):
@@ -410,18 +312,12 @@ class E2SmKpmIndicationMessage(betterproto.Message):
         betterproto.message_field(2, group="e2_sm_kpm_indication_message")
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmKpmIndicationMessageFormat1(betterproto.Message):
     """sequence from e2sm-kpm-v01.00.asn1:213"""
 
     pm_containers: List["PmContainersList"] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -430,9 +326,6 @@ class PmContainersList(betterproto.Message):
 
     performance_container: "PfContainer" = betterproto.message_field(1)
     the_rancontainer: "RanContainer" = betterproto.message_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -444,9 +337,6 @@ class E2SmKpmRanfunctionDescription(betterproto.Message):
         2
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmKpmRanfunctionDescriptionE2SmKpmRanfunctionItem001(betterproto.Message):
@@ -455,18 +345,12 @@ class E2SmKpmRanfunctionDescriptionE2SmKpmRanfunctionItem001(betterproto.Message
     ] = betterproto.message_field(1)
     ric_report_style_list: List["RicReportStyleList"] = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class TriggerConditionIeItem(betterproto.Message):
     """sequence from e2sm-kpm-v01.00.asn1:253"""
 
     report_period_ie: "RtPeriodIe" = betterproto.enum_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -478,9 +362,6 @@ class RanfunctionName(betterproto.Message):
     ran_function_description: str = betterproto.string_field(3)
     ran_function_instance: int = betterproto.int32_field(4)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RicEventTriggerStyleList(betterproto.Message):
@@ -489,9 +370,6 @@ class RicEventTriggerStyleList(betterproto.Message):
     ric_event_trigger_style_type: "RicStyleType" = betterproto.message_field(1)
     ric_event_trigger_style_name: "RicStyleName" = betterproto.message_field(2)
     ric_event_trigger_format_type: "RicFormatType" = betterproto.message_field(3)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -503,9 +381,6 @@ class RicReportStyleList(betterproto.Message):
     ric_indication_header_format_type: "RicFormatType" = betterproto.message_field(3)
     ric_indication_message_format_type: "RicFormatType" = betterproto.message_field(4)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class PfContainer(betterproto.Message):
@@ -515,9 +390,6 @@ class PfContainer(betterproto.Message):
     o_cu_cp: "OcucpPfContainer" = betterproto.message_field(2, group="pf_container")
     o_cu_up: "OcuupPfContainer" = betterproto.message_field(3, group="pf_container")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class OduPfContainer(betterproto.Message):
@@ -526,9 +398,6 @@ class OduPfContainer(betterproto.Message):
     cell_resource_report_list: List[
         "CellResourceReportListItem"
     ] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -542,9 +411,6 @@ class CellResourceReportListItem(betterproto.Message):
         "ServedPlmnPerCellListItem"
     ] = betterproto.message_field(4)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class ServedPlmnPerCellListItem(betterproto.Message):
@@ -554,9 +420,6 @@ class ServedPlmnPerCellListItem(betterproto.Message):
     du_pm_5_gc: "FgcDuPmContainer" = betterproto.message_field(2)
     du_pm_epc: "EpcDuPmContainer" = betterproto.message_field(3)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class FgcDuPmContainer(betterproto.Message):
@@ -565,9 +428,6 @@ class FgcDuPmContainer(betterproto.Message):
     slice_per_plmn_per_cell_list: List[
         "SlicePerPlmnPerCellListItem"
     ] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -579,9 +439,6 @@ class SlicePerPlmnPerCellListItem(betterproto.Message):
         "FqiperslicesPerPlmnPerCellListItem"
     ] = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class FqiperslicesPerPlmnPerCellListItem(betterproto.Message):
@@ -591,18 +448,12 @@ class FqiperslicesPerPlmnPerCellListItem(betterproto.Message):
     dl_prbusage: int = betterproto.int32_field(2)
     ul_prbusage: int = betterproto.int32_field(3)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class EpcDuPmContainer(betterproto.Message):
     """sequence from e2sm-kpm-v01.00.asn1:341"""
 
     per_qcireport_list: List["PerQcireportListItem"] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -612,9 +463,6 @@ class PerQcireportListItem(betterproto.Message):
     qci: int = betterproto.int32_field(1)
     dl_prbusage: int = betterproto.int32_field(2)
     ul_prbusage: int = betterproto.int32_field(3)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -626,16 +474,10 @@ class OcucpPfContainer(betterproto.Message):
         betterproto.message_field(2)
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class OcucpPfContainerCuCpResourceStatus001(betterproto.Message):
     number_of_active_ues: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -645,9 +487,6 @@ class OcuupPfContainer(betterproto.Message):
     g_nb_cu_up_name: "GnbCuUpName" = betterproto.message_field(1)
     pf_container_list: List["PfContainerListItem"] = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class PfContainerListItem(betterproto.Message):
@@ -656,18 +495,12 @@ class PfContainerListItem(betterproto.Message):
     interface_type: "NiType" = betterproto.enum_field(1)
     o_cu_up_pm_container: "CuupmeasurementContainer" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class CuupmeasurementContainer(betterproto.Message):
     """sequence from e2sm-kpm-v01.00.asn1:381"""
 
     plmn_list: List["PlmnIdList"] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -678,18 +511,12 @@ class PlmnIdList(betterproto.Message):
     cu_up_pm_5_gc: "FgcCuupPmFormat" = betterproto.message_field(2)
     cu_up_pm_epc: "EpcCuupPmFormat" = betterproto.message_field(3)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class FgcCuupPmFormat(betterproto.Message):
     """sequence from e2sm-kpm-v01.00.asn1:393"""
 
     slice_to_report_list: List["SliceToReportListItem"] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -701,9 +528,6 @@ class SliceToReportListItem(betterproto.Message):
         "FqiperslicesPerPlmnListItem"
     ] = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class FqiperslicesPerPlmnListItem(betterproto.Message):
@@ -712,9 +536,6 @@ class FqiperslicesPerPlmnListItem(betterproto.Message):
     five_qi: int = betterproto.int32_field(1)
     p_dcpbytes_dl: int = betterproto.int64_field(2)
     p_dcpbytes_ul: int = betterproto.int64_field(3)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -725,9 +546,6 @@ class EpcCuupPmFormat(betterproto.Message):
         1
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class PerQcireportListItemFormat(betterproto.Message):
@@ -737,70 +555,43 @@ class PerQcireportListItemFormat(betterproto.Message):
     p_dcpbytes_dl: int = betterproto.int64_field(2)
     p_dcpbytes_ul: int = betterproto.int64_field(3)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class PlmnIdentity(betterproto.Message):
     value: bytes = betterproto.bytes_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
 class NrcellIdentity(betterproto.Message):
     value: "BitString" = betterproto.message_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RanContainer(betterproto.Message):
     value: bytes = betterproto.bytes_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
 class RicStyleName(betterproto.Message):
     value: str = betterproto.string_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GnbCuCpName(betterproto.Message):
     value: str = betterproto.string_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
 class GnbDuName(betterproto.Message):
     value: str = betterproto.string_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GnbCuUpName(betterproto.Message):
     value: str = betterproto.string_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
 class BitString(betterproto.Message):
     value: int = betterproto.uint64_field(1)
     len: int = betterproto.uint32_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()

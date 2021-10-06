@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import List
 
 import betterproto
+from betterproto.grpc.grpclib_server import ServiceBase
 
 
 class CellSize(betterproto.Enum):
@@ -47,9 +48,6 @@ class Eutracgi(betterproto.Message):
     p_lmn_identity: "PlmnIdentity" = betterproto.message_field(1)
     e_utracell_identity: "EutracellIdentity" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class Nrcgi(betterproto.Message):
@@ -57,9 +55,6 @@ class Nrcgi(betterproto.Message):
 
     p_lmn_identity: "PlmnIdentity" = betterproto.message_field(1)
     n_rcell_identity: "NrcellIdentity" = betterproto.message_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -69,18 +64,12 @@ class CellGlobalId(betterproto.Message):
     nr_cgi: "Nrcgi" = betterproto.message_field(1, group="cell_global_id")
     e_utra_cgi: "Eutracgi" = betterproto.message_field(2, group="cell_global_id")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class Earfcn(betterproto.Message):
     """range of Integer from e2sm_rc_pre_v2.asn:40{EARFCN}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -89,18 +78,12 @@ class Nrarfcn(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class Pci(betterproto.Message):
     """range of Integer from e2sm_rc_pre_v2.asn:42{PCI}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -110,18 +93,12 @@ class Arfcn(betterproto.Message):
     e_arfcn: "Earfcn" = betterproto.message_field(1, group="arfcn")
     nr_arfcn: "Nrarfcn" = betterproto.message_field(2, group="arfcn")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxofMessageProtocolTests(betterproto.Message):
     """constant Integer from e2sm_rc_pre_v2.asn:59{-}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -130,18 +107,12 @@ class MaxofRicstyles(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxPlmn(betterproto.Message):
     """constant Integer from e2sm_rc_pre_v2.asn:61{-}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -150,18 +121,12 @@ class MaxNr(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxEarfcn(betterproto.Message):
     """constant Integer from e2sm_rc_pre_v2.asn:63{-}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -170,18 +135,12 @@ class MaxNrarfcn(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxPci(betterproto.Message):
     """constant Integer from e2sm_rc_pre_v2.asn:65{-}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -190,18 +149,12 @@ class MaxPciRange(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxofRanparameters(betterproto.Message):
     """constant Integer from e2sm_rc_pre_v2.asn:67{-}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -210,18 +163,12 @@ class RicStyleType(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RicFormatType(betterproto.Message):
     """range of Integer from e2sm_rc_pre_v2.asn:77{RIC-Format-Type}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -232,9 +179,6 @@ class RicControlMessagePriority(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RanparameterItem(betterproto.Message):
@@ -242,18 +186,12 @@ class RanparameterItem(betterproto.Message):
 
     ran_parameter_id: "RanparameterId" = betterproto.message_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RanparameterId(betterproto.Message):
     """range of Integer from e2sm_rc_pre_v2.asn:84{RANparameter-ID}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -267,9 +205,6 @@ class RanparameterValue(betterproto.Message):
     value_oct_s: str = betterproto.string_field(5, group="ranparameter_value")
     value_prt_s: str = betterproto.string_field(6, group="ranparameter_value")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RanparameterDefItem(betterproto.Message):
@@ -278,9 +213,6 @@ class RanparameterDefItem(betterproto.Message):
     ran_parameter_id: "RanparameterId" = betterproto.message_field(1)
     ran_parameter_name: "RanparameterName" = betterproto.message_field(2)
     ran_parameter_type: "RanparameterType" = betterproto.enum_field(3)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -295,9 +227,6 @@ class E2SmRcPreEventTriggerDefinition(betterproto.Message):
         )
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmRcPreEventTriggerDefinitionFormat1(betterproto.Message):
@@ -309,9 +238,6 @@ class E2SmRcPreEventTriggerDefinitionFormat1(betterproto.Message):
     trigger_type: "RcPreTriggerType" = betterproto.enum_field(1)
     reporting_period_ms: int = betterproto.uint32_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmRcPreIndicationHeader(betterproto.Message):
@@ -320,9 +246,6 @@ class E2SmRcPreIndicationHeader(betterproto.Message):
     indication_header_format1: "E2SmRcPreIndicationHeaderFormat1" = (
         betterproto.message_field(1, group="e2_sm_rc_pre_indication_header")
     )
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -333,9 +256,6 @@ class E2SmRcPreIndicationHeaderFormat1(betterproto.Message):
     """
 
     cgi: "CellGlobalId" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -349,9 +269,6 @@ class E2SmRcPreIndicationMessage(betterproto.Message):
         betterproto.message_field(2, group="e2_sm_rc_pre_indication_message")
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmRcPreIndicationMessageFormat1(betterproto.Message):
@@ -364,9 +281,6 @@ class E2SmRcPreIndicationMessageFormat1(betterproto.Message):
     pci: "Pci" = betterproto.message_field(3)
     neighbors: List["Nrt"] = betterproto.message_field(4)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class Nrt(betterproto.Message):
@@ -377,9 +291,6 @@ class Nrt(betterproto.Message):
     cell_size: "CellSize" = betterproto.enum_field(3)
     pci: "Pci" = betterproto.message_field(4)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmRcPreControlHeader(betterproto.Message):
@@ -388,9 +299,6 @@ class E2SmRcPreControlHeader(betterproto.Message):
     control_header_format1: "E2SmRcPreControlHeaderFormat1" = betterproto.message_field(
         1, group="e2_sm_rc_pre_control_header"
     )
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -405,9 +313,6 @@ class E2SmRcPreControlHeaderFormat1(betterproto.Message):
         betterproto.message_field(3)
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmRcPreControlMessage(betterproto.Message):
@@ -416,9 +321,6 @@ class E2SmRcPreControlMessage(betterproto.Message):
     control_message: "E2SmRcPreControlMessageFormat1" = betterproto.message_field(
         1, group="e2_sm_rc_pre_control_message"
     )
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -429,9 +331,6 @@ class E2SmRcPreControlMessageFormat1(betterproto.Message):
 
     parameter_type: "RanparameterDefItem" = betterproto.message_field(1)
     parameter_val: "RanparameterValue" = betterproto.message_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -445,9 +344,6 @@ class E2SmRcPreControlOutcome(betterproto.Message):
         betterproto.message_field(1, group="e2_sm_rc_pre_control_outcome")
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmRcPreControlOutcomeFormat1(betterproto.Message):
@@ -456,9 +352,6 @@ class E2SmRcPreControlOutcomeFormat1(betterproto.Message):
     """
 
     outcome_element_list: List["RanparameterItem"] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -472,9 +365,6 @@ class E2SmRcPreRanfunctionDescription(betterproto.Message):
         2
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmRcPreRanfunctionDescriptionE2SmRcPreRanfunctionItem001(betterproto.Message):
@@ -484,9 +374,6 @@ class E2SmRcPreRanfunctionDescriptionE2SmRcPreRanfunctionItem001(betterproto.Mes
         "RicEventTriggerStyleList"
     ] = betterproto.message_field(1)
     ric_report_style_list: List["RicReportStyleList"] = betterproto.message_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -498,9 +385,6 @@ class RanfunctionName(betterproto.Message):
     ran_function_description: str = betterproto.string_field(3)
     ran_function_instance: int = betterproto.int32_field(4)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RicEventTriggerStyleList(betterproto.Message):
@@ -509,9 +393,6 @@ class RicEventTriggerStyleList(betterproto.Message):
     ric_event_trigger_style_type: "RicStyleType" = betterproto.message_field(1)
     ric_event_trigger_style_name: "RicStyleName" = betterproto.message_field(2)
     ric_event_trigger_format_type: "RicFormatType" = betterproto.message_field(3)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -523,18 +404,12 @@ class RicReportStyleList(betterproto.Message):
     ric_indication_header_format_type: "RicFormatType" = betterproto.message_field(3)
     ric_indication_message_format_type: "RicFormatType" = betterproto.message_field(4)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RanparameterName(betterproto.Message):
     """{RANparameter-Name}"""
 
     value: str = betterproto.string_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -543,38 +418,23 @@ class RicStyleName(betterproto.Message):
 
     value: str = betterproto.string_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class PlmnIdentity(betterproto.Message):
     value: bytes = betterproto.bytes_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
 class EutracellIdentity(betterproto.Message):
     value: "BitString" = betterproto.message_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class NrcellIdentity(betterproto.Message):
     value: "BitString" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
 class BitString(betterproto.Message):
     value: bytes = betterproto.bytes_field(1)
     len: int = betterproto.uint32_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()

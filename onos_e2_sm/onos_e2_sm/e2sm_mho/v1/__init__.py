@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import List
 
 import betterproto
+from betterproto.grpc.grpclib_server import ServiceBase
 
 
 class MhoTriggerType(betterproto.Enum):
@@ -36,9 +37,6 @@ class Eutracgi(betterproto.Message):
     p_lmn_identity: "PlmnIdentity" = betterproto.message_field(1)
     e_utracell_identity: "EutracellIdentity" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class Nrcgi(betterproto.Message):
@@ -46,9 +44,6 @@ class Nrcgi(betterproto.Message):
 
     p_lmn_identity: "PlmnIdentity" = betterproto.message_field(1)
     n_rcell_identity: "NrcellIdentity" = betterproto.message_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -58,18 +53,12 @@ class CellGlobalId(betterproto.Message):
     nr_cgi: "Nrcgi" = betterproto.message_field(1, group="cell_global_id")
     e_utra_cgi: "Eutracgi" = betterproto.message_field(2, group="cell_global_id")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class Rsrp(betterproto.Message):
     """range of Integer from e2sm-mho.asn1:40 {RSRP}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -78,18 +67,12 @@ class MaxofMessageProtocolTests(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxofRicstyles(betterproto.Message):
     """constant Integer from e2sm-mho.asn1:49{-}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -98,18 +81,12 @@ class MaxPlmn(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxNr(betterproto.Message):
     """constant Integer from e2sm-mho.asn1:51{-}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -118,18 +95,12 @@ class RicStyleType(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RicFormatType(betterproto.Message):
     """range of Integer from e2sm-mho.asn1:61{RIC-Format-Type}"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -140,9 +111,6 @@ class RicControlMessagePriority(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmMhoEventTriggerDefinition(betterproto.Message):
@@ -151,9 +119,6 @@ class E2SmMhoEventTriggerDefinition(betterproto.Message):
     event_definition_format1: "E2SmMhoEventTriggerDefinitionFormat1" = (
         betterproto.message_field(1, group="e2_sm_mho_event_trigger_definition")
     )
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -165,9 +130,6 @@ class E2SmMhoEventTriggerDefinitionFormat1(betterproto.Message):
     trigger_type: "MhoTriggerType" = betterproto.enum_field(1)
     reporting_period_ms: int = betterproto.int32_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmMhoIndicationHeader(betterproto.Message):
@@ -177,18 +139,12 @@ class E2SmMhoIndicationHeader(betterproto.Message):
         betterproto.message_field(1, group="e2_sm_mho_indication_header")
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmMhoIndicationHeaderFormat1(betterproto.Message):
     """sequence from e2sm-mho.asn1:101 {E2SM-MHO-IndicationHeader-Format1}"""
 
     cgi: "CellGlobalId" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -202,9 +158,6 @@ class E2SmMhoIndicationMessage(betterproto.Message):
         betterproto.message_field(2, group="e2_sm_mho_indication_message")
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmMhoIndicationMessageFormat1(betterproto.Message):
@@ -212,9 +165,6 @@ class E2SmMhoIndicationMessageFormat1(betterproto.Message):
 
     ue_id: "UeIdentity" = betterproto.message_field(1)
     meas_report: List["E2SmMhoMeasurementReportItem"] = betterproto.message_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -224,9 +174,6 @@ class E2SmMhoMeasurementReportItem(betterproto.Message):
     cgi: "CellGlobalId" = betterproto.message_field(1)
     rsrp: "Rsrp" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmMhoIndicationMessageFormat2(betterproto.Message):
@@ -234,9 +181,6 @@ class E2SmMhoIndicationMessageFormat2(betterproto.Message):
 
     ue_id: "UeIdentity" = betterproto.message_field(1)
     rrc_status: "Rrcstatus" = betterproto.enum_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -246,9 +190,6 @@ class E2SmMhoControlHeader(betterproto.Message):
     control_header_format1: "E2SmMhoControlHeaderFormat1" = betterproto.message_field(
         1, group="e2_sm_mho_control_header"
     )
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -260,9 +201,6 @@ class E2SmMhoControlHeaderFormat1(betterproto.Message):
         betterproto.message_field(2)
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmMhoControlMessage(betterproto.Message):
@@ -272,9 +210,6 @@ class E2SmMhoControlMessage(betterproto.Message):
         1, group="e2_sm_mho_control_message"
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmMhoControlMessageFormat1(betterproto.Message):
@@ -283,9 +218,6 @@ class E2SmMhoControlMessageFormat1(betterproto.Message):
     serving_cgi: "CellGlobalId" = betterproto.message_field(1)
     ued_id: "UeIdentity" = betterproto.message_field(2)
     target_cgi: "CellGlobalId" = betterproto.message_field(3)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -298,9 +230,6 @@ class E2SmMhoRanfunctionDescription(betterproto.Message):
     ] = betterproto.message_field(2)
     ric_report_style_list: List["RicReportStyleList"] = betterproto.message_field(3)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RanfunctionName(betterproto.Message):
@@ -311,9 +240,6 @@ class RanfunctionName(betterproto.Message):
     ran_function_description: str = betterproto.string_field(3)
     ran_function_instance: int = betterproto.int32_field(4)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RicEventTriggerStyleList(betterproto.Message):
@@ -322,9 +248,6 @@ class RicEventTriggerStyleList(betterproto.Message):
     ric_event_trigger_style_type: "RicStyleType" = betterproto.message_field(1)
     ric_event_trigger_style_name: "RicStyleName" = betterproto.message_field(2)
     ric_event_trigger_format_type: "RicFormatType" = betterproto.message_field(3)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -336,18 +259,12 @@ class RicReportStyleList(betterproto.Message):
     ric_indication_header_format_type: "RicFormatType" = betterproto.message_field(3)
     ric_indication_message_format_type: "RicFormatType" = betterproto.message_field(4)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RicStyleName(betterproto.Message):
     """{RIC-Style-Name}"""
 
     value: str = betterproto.string_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -356,18 +273,12 @@ class UeIdentity(betterproto.Message):
 
     value: str = betterproto.string_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class PlmnIdentity(betterproto.Message):
     """{PLMN-Identity}"""
 
     value: bytes = betterproto.bytes_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -376,18 +287,12 @@ class EutracellIdentity(betterproto.Message):
 
     value: "BitString" = betterproto.message_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class NrcellIdentity(betterproto.Message):
     """{NRCellIdentity}"""
 
     value: "BitString" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -396,6 +301,3 @@ class BitString(betterproto.Message):
 
     value: int = betterproto.uint64_field(1)
     len: int = betterproto.uint32_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()

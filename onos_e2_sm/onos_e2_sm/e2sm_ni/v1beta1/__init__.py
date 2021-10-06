@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import List
 
 import betterproto
+from betterproto.grpc.grpclib_server import ServiceBase
 
 
 class Criticality(betterproto.Enum):
@@ -89,9 +90,6 @@ class GlobalEnbId(betterproto.Message):
     p_lmn_identity: "PlmnIdentity" = betterproto.message_field(1)
     e_nb_id: "EnbId" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class EnbId(betterproto.Message):
@@ -102,9 +100,6 @@ class EnbId(betterproto.Message):
     short_macro_e_nb_id: bytes = betterproto.bytes_field(3, group="enb_id")
     long_macro_e_nb_id: bytes = betterproto.bytes_field(4, group="enb_id")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GlobalenGnbId(betterproto.Message):
@@ -113,18 +108,12 @@ class GlobalenGnbId(betterproto.Message):
     p_lmn_identity: "PlmnIdentity" = betterproto.message_field(1)
     g_nb_id: "EngnbId" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class EngnbId(betterproto.Message):
     """sequence from e2sm-ni-v01.00.asn1:45"""
 
     g_nb_id: bytes = betterproto.bytes_field(1, group="engnb_id")
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -133,18 +122,12 @@ class GnbCuUpId(betterproto.Message):
 
     value: int = betterproto.int64_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GnbDuId(betterproto.Message):
     """range of Integer from e2sm-ni-v01.00.asn1:59"""
 
     value: int = betterproto.int64_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -154,18 +137,12 @@ class GlobalgNbId(betterproto.Message):
     plmn_id: "PlmnIdentity" = betterproto.message_field(1)
     gnb_id: "GnbIdChoice" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GnbIdChoice(betterproto.Message):
     """sequence from e2sm-ni-v01.00.asn1:72"""
 
     gnb_id: bytes = betterproto.bytes_field(1, group="gnb_id_choice")
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -175,9 +152,6 @@ class GlobalngeNbId(betterproto.Message):
     plmn_id: "PlmnIdentity" = betterproto.message_field(1)
     enb_id: "EnbIdChoice" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class EnbIdChoice(betterproto.Message):
@@ -186,9 +160,6 @@ class EnbIdChoice(betterproto.Message):
     enb_id_macro: bytes = betterproto.bytes_field(1, group="enb_id_choice")
     enb_id_shortmacro: bytes = betterproto.bytes_field(2, group="enb_id_choice")
     enb_id_longmacro: bytes = betterproto.bytes_field(3, group="enb_id_choice")
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -200,18 +171,12 @@ class GlobalNgRannodeId(betterproto.Message):
         2, group="global_ng_rannode_id"
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxProtocolIes(betterproto.Message):
     """constant Integer from e2sm-ni-v01.00.asn1:104"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -220,18 +185,12 @@ class ProcedureCode(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class ProtocolIeId(betterproto.Message):
     """range of Integer from e2sm-ni-v01.00.asn1:112"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -240,18 +199,12 @@ class MaxofInterfaceProtocolTests(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxofRanueGroups(betterproto.Message):
     """constant Integer from e2sm-ni-v01.00.asn1:123"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -260,18 +213,12 @@ class MaxofActionParameters(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxofRanparameters(betterproto.Message):
     """constant Integer from e2sm-ni-v01.00.asn1:125"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -280,18 +227,12 @@ class MaxofNitypes(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MaxofRicstyles(betterproto.Message):
     """constant Integer from e2sm-ni-v01.00.asn1:127"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -301,9 +242,6 @@ class E2SmNiEventTriggerDefinition(betterproto.Message):
     event_definition_format1: "E2SmNiEventTriggerDefinitionFormat1" = (
         betterproto.message_field(1, group="e2_sm_ni_event_trigger_definition")
     )
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -316,9 +254,6 @@ class E2SmNiEventTriggerDefinitionFormat1(betterproto.Message):
     interface_message_type: "NiMessageType" = betterproto.message_field(4)
     interface_protocol_ie_list: List["NiProtocolIeItem"] = betterproto.message_field(5)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmNiActionDefinition(betterproto.Message):
@@ -328,9 +263,6 @@ class E2SmNiActionDefinition(betterproto.Message):
     action_definition_format: "E2SmNiActionDefinitionFormat" = (
         betterproto.message_field(2)
     )
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -344,9 +276,6 @@ class E2SmNiActionDefinitionFormat(betterproto.Message):
         betterproto.message_field(2, group="e2_sm_ni_action_definition_format")
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmNiActionDefinitionFormat1(betterproto.Message):
@@ -354,18 +283,12 @@ class E2SmNiActionDefinitionFormat1(betterproto.Message):
 
     action_parameter_list: List["RanparameterItem"] = betterproto.message_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmNiActionDefinitionFormat2(betterproto.Message):
     """sequence from e2sm-ni-v01.00.asn1:182"""
 
     ran_uegroup_list: List["RanueGroupItem"] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -375,9 +298,6 @@ class E2SmNiIndicationHeader(betterproto.Message):
     indication_header_format1: "E2SmNiIndicationHeaderFormat1" = (
         betterproto.message_field(1, group="e2_sm_ni_indication_header")
     )
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -389,9 +309,6 @@ class E2SmNiIndicationHeaderFormat1(betterproto.Message):
     interface_direction: "NiDirection" = betterproto.enum_field(3)
     timestamp: "NiTimeStamp" = betterproto.message_field(4)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmNiIndicationMessage(betterproto.Message):
@@ -401,18 +318,12 @@ class E2SmNiIndicationMessage(betterproto.Message):
         betterproto.message_field(1, group="e2_sm_ni_indication_message")
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmNiIndicationMessageFormat1(betterproto.Message):
     """sequence from e2sm-ni-v01.00.asn1:221"""
 
     interface_message: "NiMessage" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -426,9 +337,6 @@ class E2SmNiCallProcessId(betterproto.Message):
         2, group="e2_sm_ni_call_process_id"
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmNiCallProcessIdFormat1(betterproto.Message):
@@ -436,18 +344,12 @@ class E2SmNiCallProcessIdFormat1(betterproto.Message):
 
     call_process_id: "RancallProcessIdNumber" = betterproto.message_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmNiCallProcessIdFormat2(betterproto.Message):
     """sequence from e2sm-ni-v01.00.asn1:244"""
 
     call_process_id: "RancallProcessIdString" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -457,9 +359,6 @@ class E2SmNiControlHeader(betterproto.Message):
     control_header_format1: "E2SmNiControlHeaderFormat1" = betterproto.message_field(
         1, group="e2_sm_ni_control_header"
     )
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -473,9 +372,6 @@ class E2SmNiControlHeaderFormat1(betterproto.Message):
         betterproto.message_field(4)
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmNiControlMessage(betterproto.Message):
@@ -485,18 +381,12 @@ class E2SmNiControlMessage(betterproto.Message):
         1, group="e2_sm_ni_control_message"
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmNiControlMessageFormat1(betterproto.Message):
     """sequence from e2sm-ni-v01.00.asn1:283"""
 
     interface_message: "NiMessage" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -507,18 +397,12 @@ class E2SmNiControlOutcome(betterproto.Message):
         1, group="e2_sm_ni_control_outcome"
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class E2SmNiControlOutcomeFormat1(betterproto.Message):
     """sequence from e2sm-ni-v01.00.asn1:301"""
 
     outcome_element_list: List["RanparameterItem"] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -527,9 +411,6 @@ class E2SmNiRanfunctionDescription(betterproto.Message):
 
     ran_function_name: "RanfunctionName" = betterproto.message_field(1)
     ni_type_list: List["E2SmNiRanfunctionItem"] = betterproto.message_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -545,18 +426,12 @@ class E2SmNiRanfunctionItem(betterproto.Message):
     ric_control_style_list: List["RicControlStyleList"] = betterproto.message_field(5)
     ric_policy_style_list: List["RicPolicyStyleList"] = betterproto.message_field(6)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GlobalEnGnbId(betterproto.Message):
     """reference from e2sm-ni-v01.00.asn1:343"""
 
     value: "GlobalenGnbId" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -566,9 +441,6 @@ class GlobalGnbDuId(betterproto.Message):
     global_ng_ran_id: "GlobalNgRanId" = betterproto.message_field(1)
     g_nb_du_id: "GnbDuId" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GlobalGnbCuUpId(betterproto.Message):
@@ -577,18 +449,12 @@ class GlobalGnbCuUpId(betterproto.Message):
     global_ng_ran_id: "GlobalNgRanId" = betterproto.message_field(1)
     g_nb_cu_up_id: "GnbCuUpId" = betterproto.message_field(2)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class GlobalNgRanId(betterproto.Message):
     """reference from e2sm-ni-v01.00.asn1:361"""
 
     value: "GlobalNgRannodeId" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -608,9 +474,6 @@ class NiIdentifier(betterproto.Message):
     global_g_nb_cu_up_id: "GlobalGnbCuUpId" = betterproto.message_field(
         5, group="ni_identifier"
     )
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -636,18 +499,12 @@ class NiMessageType(betterproto.Message):
         6, group="ni_message_type"
     )
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class NiMessageTypeS1(betterproto.Message):
     """reference from e2sm-ni-v01.00.asn1:394"""
 
     value: "NiMessageTypeApproach1" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -656,18 +513,12 @@ class NiMessageTypeX2(betterproto.Message):
 
     value: "NiMessageTypeApproach1" = betterproto.message_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class NiMessageTypeNg(betterproto.Message):
     """reference from e2sm-ni-v01.00.asn1:396"""
 
     value: "NiMessageTypeApproach1" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -676,18 +527,12 @@ class NiMessageTypeXn(betterproto.Message):
 
     value: "NiMessageTypeApproach1" = betterproto.message_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class NiMessageTypeF1(betterproto.Message):
     """reference from e2sm-ni-v01.00.asn1:398"""
 
     value: "NiMessageTypeApproach1" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -696,9 +541,6 @@ class NiMessageTypeE1(betterproto.Message):
 
     value: "NiMessageTypeApproach1" = betterproto.message_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class NiMessageTypeApproach1(betterproto.Message):
@@ -706,9 +548,6 @@ class NiMessageTypeApproach1(betterproto.Message):
 
     procedure_code: "ProcedureCode" = betterproto.message_field(1)
     type_of_message: "TypeOfMessage" = betterproto.enum_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -719,18 +558,12 @@ class NiProtocolIeItem(betterproto.Message):
     interface_protocol_ie_test: "NiProtocolIeTest" = betterproto.enum_field(2)
     interface_protocol_ie_value: "NiProtocolIeValue" = betterproto.message_field(3)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class NiProtocolIeId(betterproto.Message):
     """reference from e2sm-ni-v01.00.asn1:418"""
 
     value: "ProtocolIeId" = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -744,18 +577,12 @@ class NiProtocolIeValue(betterproto.Message):
     value_oct_s: bytes = betterproto.bytes_field(5, group="ni_protocol_ie_value")
     value_prt_s: int = betterproto.int32_field(6, group="ni_protocol_ie_value")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RancallProcessIdNumber(betterproto.Message):
     """range of Integer from e2sm-ni-v01.00.asn1:456"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -767,18 +594,12 @@ class RanfunctionName(betterproto.Message):
     ran_function_description: str = betterproto.string_field(3)
     ran_function_instance: int = betterproto.int32_field(4)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RanimperativePolicy(betterproto.Message):
     """sequence from e2sm-ni-v01.00.asn1:468"""
 
     ran_imperative_policy_list: List["RanparameterItem"] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -787,9 +608,6 @@ class RanparameterItem(betterproto.Message):
 
     ran_parameter_id: "RanparameterId" = betterproto.message_field(1)
     ran_parameter_value: "RanparameterValue" = betterproto.message_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -800,18 +618,12 @@ class RanparameterDefItem(betterproto.Message):
     ran_parameter_name: "RanparameterName" = betterproto.message_field(2)
     ran_parameter_type: "RanparameterType" = betterproto.enum_field(3)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RanparameterId(betterproto.Message):
     """range of Integer from e2sm-ni-v01.00.asn1:485"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -825,18 +637,12 @@ class RanparameterValue(betterproto.Message):
     value_oct_s: bytes = betterproto.bytes_field(5, group="ranparameter_value")
     value_prt_s: int = betterproto.int32_field(6, group="ranparameter_value")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RanueGroupId(betterproto.Message):
     """range of Integer from e2sm-ni-v01.00.asn1:519"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -847,18 +653,12 @@ class RanueGroupItem(betterproto.Message):
     ran_uegroup_definition: "RanueGroupDefinition" = betterproto.message_field(2)
     ran_policy: "RanimperativePolicy" = betterproto.message_field(3)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RanueGroupDefinition(betterproto.Message):
     """sequence from e2sm-ni-v01.00.asn1:531"""
 
     ran_uegroup_def_list: List["RanueGroupDefItem"] = betterproto.message_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -869,18 +669,12 @@ class RanueGroupDefItem(betterproto.Message):
     ran_parameter_test: "RanparameterTestCondition" = betterproto.enum_field(2)
     ran_parameter_value: "RanparameterValue" = betterproto.message_field(3)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RicControlMessagePriority(betterproto.Message):
     """range of Integer from e2sm-ni-v01.00.asn1:546"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -898,9 +692,6 @@ class RicControlStyleList(betterproto.Message):
         "RanparameterDefItem"
     ] = betterproto.message_field(8)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RicEventTriggerStyleList(betterproto.Message):
@@ -909,9 +700,6 @@ class RicEventTriggerStyleList(betterproto.Message):
     ric_event_trigger_style_type: "RicStyleType" = betterproto.message_field(1)
     ric_event_trigger_style_name: "RicStyleName" = betterproto.message_field(2)
     ric_event_trigger_format_type: "RicFormatType" = betterproto.message_field(3)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -928,9 +716,6 @@ class RicInsertStyleList(betterproto.Message):
     ric_indication_message_format_type: "RicFormatType" = betterproto.message_field(6)
     ric_call_process_idformat_type: "RicFormatType" = betterproto.message_field(7)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RicPolicyStyleList(betterproto.Message):
@@ -942,9 +727,6 @@ class RicPolicyStyleList(betterproto.Message):
     ric_policy_ran_parameter_def_list: List[
         "RanparameterDefItem"
     ] = betterproto.message_field(4)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -960,18 +742,12 @@ class RicReportStyleList(betterproto.Message):
     ric_indication_header_format_type: "RicFormatType" = betterproto.message_field(5)
     ric_indication_message_format_type: "RicFormatType" = betterproto.message_field(6)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RicFormatType(betterproto.Message):
     """range of Integer from e2sm-ni-v01.00.asn1:594"""
 
     value: int = betterproto.int32_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -980,53 +756,32 @@ class RicStyleType(betterproto.Message):
 
     value: int = betterproto.int32_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class PlmnIdentity(betterproto.Message):
     value: bytes = betterproto.bytes_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
 class NiTimeStamp(betterproto.Message):
     value: bytes = betterproto.bytes_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class NiMessage(betterproto.Message):
     value: bytes = betterproto.bytes_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
 class RancallProcessIdString(betterproto.Message):
     value: str = betterproto.string_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RanparameterName(betterproto.Message):
     value: str = betterproto.string_field(1)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class RicStyleName(betterproto.Message):
     value: str = betterproto.string_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()

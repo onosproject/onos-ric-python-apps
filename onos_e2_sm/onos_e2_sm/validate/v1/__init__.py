@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from typing import List
 
 import betterproto
+from betterproto.grpc.grpclib_server import ServiceBase
 
 
 class KnownRegex(betterproto.Enum):
@@ -41,7 +42,7 @@ class FieldRules(betterproto.Message):
     sfixed64: "SFixed64Rules" = betterproto.message_field(12, group="type")
     bool: "BoolRules" = betterproto.message_field(13, group="type")
     string: "StringRules" = betterproto.message_field(14, group="type")
-    bytes: "BytesRules" = betterproto.message_field(15, group="type")
+    bytes_: "BytesRules" = betterproto.message_field(15, group="type")
     # Complex Field Types
     enum: "EnumRules" = betterproto.message_field(16, group="type")
     repeated: "RepeatedRules" = betterproto.message_field(18, group="type")
@@ -50,9 +51,6 @@ class FieldRules(betterproto.Message):
     any: "AnyRules" = betterproto.message_field(20, group="type")
     duration: "DurationRules" = betterproto.message_field(21, group="type")
     timestamp: "TimestampRules" = betterproto.message_field(22, group="type")
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -81,9 +79,6 @@ class FloatRules(betterproto.Message):
     # values
     not_in: List[float] = betterproto.float_field(7)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class DoubleRules(betterproto.Message):
@@ -110,9 +105,6 @@ class DoubleRules(betterproto.Message):
     # NotIn specifies that this field cannot be equal to one of the specified
     # values
     not_in: List[float] = betterproto.double_field(7)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -141,9 +133,6 @@ class Int32Rules(betterproto.Message):
     # values
     not_in: List[int] = betterproto.int32_field(7)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class Int64Rules(betterproto.Message):
@@ -170,9 +159,6 @@ class Int64Rules(betterproto.Message):
     # NotIn specifies that this field cannot be equal to one of the specified
     # values
     not_in: List[int] = betterproto.int64_field(7)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -201,9 +187,6 @@ class UInt32Rules(betterproto.Message):
     # values
     not_in: List[int] = betterproto.uint32_field(7)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class UInt64Rules(betterproto.Message):
@@ -230,9 +213,6 @@ class UInt64Rules(betterproto.Message):
     # NotIn specifies that this field cannot be equal to one of the specified
     # values
     not_in: List[int] = betterproto.uint64_field(7)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -261,9 +241,6 @@ class SInt32Rules(betterproto.Message):
     # values
     not_in: List[int] = betterproto.sint32_field(7)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class SInt64Rules(betterproto.Message):
@@ -290,9 +267,6 @@ class SInt64Rules(betterproto.Message):
     # NotIn specifies that this field cannot be equal to one of the specified
     # values
     not_in: List[int] = betterproto.sint64_field(7)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -321,9 +295,6 @@ class Fixed32Rules(betterproto.Message):
     # values
     not_in: List[int] = betterproto.fixed32_field(7)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class Fixed64Rules(betterproto.Message):
@@ -350,9 +321,6 @@ class Fixed64Rules(betterproto.Message):
     # NotIn specifies that this field cannot be equal to one of the specified
     # values
     not_in: List[int] = betterproto.fixed64_field(7)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -381,9 +349,6 @@ class SFixed32Rules(betterproto.Message):
     # values
     not_in: List[int] = betterproto.sfixed32_field(7)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class SFixed64Rules(betterproto.Message):
@@ -411,9 +376,6 @@ class SFixed64Rules(betterproto.Message):
     # values
     not_in: List[int] = betterproto.sfixed64_field(7)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class BoolRules(betterproto.Message):
@@ -421,9 +383,6 @@ class BoolRules(betterproto.Message):
 
     # Const specifies that this field must be exactly the specified value
     const: bool = betterproto.bool_field(1)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -510,9 +469,6 @@ class StringRules(betterproto.Message):
     # bypass header matching rules.
     strict: bool = betterproto.bool_field(25)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class BytesRules(betterproto.Message):
@@ -554,9 +510,6 @@ class BytesRules(betterproto.Message):
     # Ipv6 specifies that the field must be a valid IPv6 address in byte format
     ipv6: bool = betterproto.bool_field(12, group="well_known")
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class EnumRules(betterproto.Message):
@@ -573,9 +526,6 @@ class EnumRules(betterproto.Message):
     # values
     not_in: List[int] = betterproto.int32_field(4)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class MessageRules(betterproto.Message):
@@ -589,9 +539,6 @@ class MessageRules(betterproto.Message):
     skip: bool = betterproto.bool_field(1)
     # Required specifies that this field must be set
     required: bool = betterproto.bool_field(2)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -612,9 +559,6 @@ class RepeatedRules(betterproto.Message):
     # Repeated message fields will still execute validation against each item
     # unless skip is specified here.
     items: "FieldRules" = betterproto.message_field(4)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -637,9 +581,6 @@ class MapRules(betterproto.Message):
     # unless skip is specified here.
     values: "FieldRules" = betterproto.message_field(5)
 
-    def __post_init__(self) -> None:
-        super().__post_init__()
-
 
 @dataclass(eq=False, repr=False)
 class AnyRules(betterproto.Message):
@@ -656,9 +597,6 @@ class AnyRules(betterproto.Message):
     # NotIn specifies that this field's `type_url` must not be equal to any of
     # the specified values.
     not_in: List[str] = betterproto.string_field(3)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -689,9 +627,6 @@ class DurationRules(betterproto.Message):
     # NotIn specifies that this field cannot be equal to one of the specified
     # values
     not_in: List[timedelta] = betterproto.message_field(8)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
 
 
 @dataclass(eq=False, repr=False)
@@ -727,6 +662,3 @@ class TimestampRules(betterproto.Message):
     # current time. This constraint can be used alone or with the LtNow and GtNow
     # rules.
     within: timedelta = betterproto.message_field(9)
-
-    def __post_init__(self) -> None:
-        super().__post_init__()
