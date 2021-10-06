@@ -775,6 +775,7 @@ async def update_mlb_cio(
     )
 
     try:
+        logging.info(f"MLB control: e2:{e2_node_id} hdr:{hdr} msg:{msg}")
         response = await e2_client.control(
             e2_node_id=e2_node_id,
             service_model_name="oran-e2sm-rc-pre",
