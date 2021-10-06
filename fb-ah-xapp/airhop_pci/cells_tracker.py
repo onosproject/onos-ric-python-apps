@@ -323,7 +323,7 @@ class CellsTracker:
         for ncgi, state in self.ncgi_cells_map.items():
             if state.e2_node_id != e2_node_id:
                 continue
-            logging.info(
+            logging.debug(
                 f"ncgi:0x{ncgi:x}: state.nci:0x{state.nci:x} ==? nci:0x{nci:x}"
             )
             if state.nci == nci:
