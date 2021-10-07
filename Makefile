@@ -30,11 +30,22 @@ Usage: make image/<app_name>
 endef
 export IMAGE_HELP
 
+SM_TMP ?= ${TMPDIR}/onos-ric-python-apps-sync-sm
+
+.PHONY: get-bindings
+get-bindings: ## clone onos-e2-sm repo and prepare python bindings for use
+	if [ ! -d "onos_e2_sm" ]; then \
+		if [ ! -d "${SM_TMP}" ]; then \
+			git clone --depth 1 git@github.com:onosproject/onos-e2-sm.git ${SM_TMP}; \
+		fi; \
+		cp -v -r ${SM_TMP}/python onos_e2_sm; \
+	fi
+
 .PHONY: image
 image: ## Build xApp docker image
 	@echo "$$IMAGE_HELP"
 
-image/%:
+image/%: get-bindings
 	if [ "all" = "$*" ]; then exit 0; fi; \
 	$(_IMAGECMD) build --tag $*:latest -f $*/Dockerfile .;
 
@@ -60,13 +71,3 @@ jenkins-test:  # @HELP run the unit tests and source code validation producing a
 jenkins-test: build-tools
 
 test: build-tools
-
-SYNCTMP ?= /tmp/onos-ric-python-apps-sync-sm
-
-# manual sync is simpler since onos-e2-sm is a private repo
-.PHONY: sync-sm
-sync-sm: ## clone onos-e2-sm repo and sync python bindings
-	rm -rf ${SYNCTMP}
-	git clone --depth 1 git@github.com:onosproject/onos-e2-sm.git ${SYNCTMP}
-	rm -rf onos_e2_sm
-	cp -r ${SYNCTMP}/python onos_e2_sm
