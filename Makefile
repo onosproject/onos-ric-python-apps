@@ -35,9 +35,8 @@ SM_TMP ?= ${TMPDIR}/onos-ric-python-apps-sync-sm
 .PHONY: get-bindings
 get-bindings: ## clone onos-e2-sm repo and prepare python bindings for use
 	if [ ! -d "onos_e2_sm" ]; then \
-		if [ ! -d "${SM_TMP}" ]; then \
-			git clone --depth 1 git@github.com:onosproject/onos-e2-sm.git ${SM_TMP}; \
-		fi; \
+		rm -rf ${SM_TMP}; \
+		git clone --depth 1 git@github.com:onosproject/onos-e2-sm.git ${SM_TMP}; \
 		cp -v -r ${SM_TMP}/python onos_e2_sm; \
 	fi
 
