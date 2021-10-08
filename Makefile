@@ -30,11 +30,21 @@ Usage: make image/<app_name>
 endef
 export IMAGE_HELP
 
+SM_TMP ?= ${TMPDIR}/onos-ric-python-apps-sync-sm
+
+.PHONY: get-bindings
+get-bindings: ## clone onos-e2-sm repo and prepare python bindings for use
+	if [ ! -d "onos_e2_sm" ]; then \
+		rm -rf ${SM_TMP}; \
+		git clone --depth 1 git@github.com:onosproject/onos-e2-sm.git ${SM_TMP}; \
+		cp -v -r ${SM_TMP}/python onos_e2_sm; \
+	fi
+
 .PHONY: image
 image: ## Build xApp docker image
 	@echo "$$IMAGE_HELP"
 
-image/%:
+image/%: get-bindings
 	if [ "all" = "$*" ]; then exit 0; fi; \
 	$(_IMAGECMD) build --tag $*:latest -f $*/Dockerfile .;
 
@@ -60,5 +70,3 @@ jenkins-test:  # @HELP run the unit tests and source code validation producing a
 jenkins-test: build-tools
 
 test: build-tools
-
-
