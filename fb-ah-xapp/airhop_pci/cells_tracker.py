@@ -62,7 +62,7 @@ def bytes_nci_bitstring(nci: int, bits: int) -> BitString:
     )
 
 
-def parse_nci_bitstring(n_rcell_identity: BitString) -> int:
+def parse_nci_bitstring(bitstring: BitString) -> int:
     """convert an APER BitString to an integer
 
     For a 36-bit bitstring encoded as 5 bytes, [0x12, 0x34, 0x56, 0x78, 0x90]
@@ -75,15 +75,15 @@ def parse_nci_bitstring(n_rcell_identity: BitString) -> int:
     ONF says that this is how APER encoding works for bit strings
     """
 
-    bitstring_bits = len(n_rcell_identity.value.value) * 8
-    bits = n_rcell_identity.value.len
+    bitstring_bits = len(bitstring.value) * 8
+    bits = bitstring.len
 
     # calculate the amount of 0 padding needs to be stripped off the LSB side
     shift = bitstring_bits - bits
 
     return (
         int.from_bytes(
-            n_rcell_identity.value.value,
+            bitstring.value,
             byteorder="big",
             signed=False,
         )
@@ -148,7 +148,7 @@ class CellsState:
             signed=False,
         )
         self.nci = parse_nci_bitstring(
-            self.indication_header.cgi.nr_cgi.n_rcell_identity
+            self.indication_header.cgi.nr_cgi.n_rcell_identity.value
         )
         self.ncgi = (self.plmnid << CELLID_BITWIDTH) | self.nci
         self.pci = self.indication_message.pci.value
@@ -159,7 +159,7 @@ class CellsState:
             n_plmnid = int.from_bytes(
                 n.cgi.nr_cgi.p_lmn_identity.value, byteorder="little", signed=False
             )
-            n_nci = parse_nci_bitstring(n.cgi.nr_cgi.n_rcell_identity)
+            n_nci = parse_nci_bitstring(n.cgi.nr_cgi.n_rcell_identity.value)
             n_ncgi = (n_plmnid << CELLID_BITWIDTH) | n_nci
             n_pci = n.pci.value
             n_fcn = n.dl_arfcn.nr_arfcn.value

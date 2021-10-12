@@ -355,6 +355,7 @@ async def process_indication(
             )
         else:
             for neighbor_ncgi, _ in sorted(changes.cell_to_register.neighbors.items()):
+                logging.info(f"MLB initial OCN ncgi:0x{changes.ncgi:x} neighbor_ncgi:0x{neighbor_ncgi:x}")
                 coros.append(
                     update_mlb_cio(
                         e2_client=e2_client,
@@ -395,7 +396,7 @@ async def process_indication(
             eson_client.remove_neighbor(changes.ncgi, changes.neighbors_to_remove)
         )
 
-    await asyncio.gather(*coros)
+    await asyncio.gather(*coros, return_exceptions=True)
 
     return changes
 
@@ -567,7 +568,7 @@ async def update_pci(
 
         outcome = E2SmRcPreControlOutcome()
         outcome.parse(response)
-        logging.debug(f"Update PCI succeeded, outcome: {outcome}")
+        logging.info(f"Update PCI succeeded, outcome: {outcome}")
         return True
     except sdk.exceptions.ClientRuntimeError:
         logging.exception("Update PCI failed")
@@ -789,7 +790,7 @@ async def update_mlb_cio(
 
         outcome = E2SmRcPreControlOutcome()
         outcome.parse(response)
-        logging.debug(f"Update CIO succeeded, outcome: {outcome}")
+        logging.info(f"Update CIO succeeded, outcome: {outcome}")
         return True
     except sdk.exceptions.ClientRuntimeError:
         logging.exception("Update CIO failed")
@@ -937,7 +938,7 @@ async def set_cio_multi_handler(request: web.Request) -> web.Response:
             )
 
         try:
-            neighbor_cgi = cells_tracker.get_cgi(neighbor_ncgi)
+            neighbor_cgi = cgiFromNcgi(neighbor_ncgi)
         except KeyError:
             raise web.HTTPBadRequest(
                 reason=f"neighbor_ncgi 0x{neighbor_ncgi:x} is not present"
