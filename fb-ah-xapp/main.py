@@ -355,7 +355,9 @@ async def process_indication(
             )
         else:
             for neighbor_ncgi, _ in sorted(changes.cell_to_register.neighbors.items()):
-                logging.info(f"MLB initial OCN ncgi:0x{changes.ncgi:x} neighbor_ncgi:0x{neighbor_ncgi:x}")
+                logging.info(
+                    f"MLB initial OCN ncgi:0x{changes.ncgi:x} neighbor_ncgi:0x{neighbor_ncgi:x}"
+                )
                 coros.append(
                     update_mlb_cio(
                         e2_client=e2_client,
@@ -592,6 +594,10 @@ async def update_eson_capacity(
     while True:
         coros = []
         for (e2_node_id, cid_str), metrics in kpi.items():
+            if e2_node_id == "global":
+                logging.info(f"MLB: stats: {cid_str} = {metrics}")
+                continue
+
             cid = int(cid_str, 16)
             ncgi = cells_tracker.find_ncgi(e2_node_id, cid)
 

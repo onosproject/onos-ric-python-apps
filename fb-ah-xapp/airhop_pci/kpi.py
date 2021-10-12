@@ -144,6 +144,7 @@ async def subscribe(
 
         # track metrics per cell
         metrics = {}
+        msg_cnt_key = ("global", "kpi_ind_message_count")  # key for msg count
         meas_info_list = ind_message.indication_message_format1.meas_info_list.value
         for meas_data_item in ind_message.indication_message_format1.meas_data.value:
             for idx, meas_record_item in enumerate(meas_data_item.meas_record.value):
@@ -187,6 +188,9 @@ async def subscribe(
 
         # track metrics per cell id
         kpi[(e2_node_id, cellid)] = metrics
+
+        # increment message counter
+        kpi[msg_cnt_key] = kpi.get(msg_cnt_key, 0) + 1
 
 
 async def track_kpi(
