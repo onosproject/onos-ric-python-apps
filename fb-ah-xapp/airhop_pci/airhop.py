@@ -30,6 +30,7 @@ from .airhop_api.com.airhopcomm.eson.nr.pci.v1 import (
 from .airhop_api.com.airhopcomm.eson.nr.v1 import (
     Cell,
     CellSize,
+    CellSpecificOffsets,
     Neighbor,
 )
 
@@ -48,6 +49,11 @@ def make_neighbor(ncgi: int, pci: int, fcn: int) -> Neighbor:
         dl_nrarfcn=fcn,
         ul_nrarfcn=fcn,
         pci=pci,
+        cell_specific_offsets=CellSpecificOffsets(
+            cio=15,  # 0dB, value 15
+            offset_freq=15,  # 0dB, value 15
+            q_offset=15,  # 0dB, value 15
+        ),
     )
 
 

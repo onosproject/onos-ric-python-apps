@@ -45,7 +45,7 @@ async def subscribe(
     e2_node_id: str,
     e2_node: E2Node,
     report_style: KpmReportStyle,
-    kpi: Dict[str, Dict[str, int]],
+    kpi: Dict[Tuple[str, str], Dict[str, int]],
 ) -> None:
     # Save subscription ID -> cell global ID
     sub_map = {}
@@ -144,6 +144,7 @@ async def subscribe(
 
         # track metrics per cell
         metrics = {}
+        msg_cnt_key = ("global", "kpi_ind_message_count")  # key for msg count
         meas_info_list = ind_message.indication_message_format1.meas_info_list.value
         for meas_data_item in ind_message.indication_message_format1.meas_data.value:
             for idx, meas_record_item in enumerate(meas_data_item.meas_record.value):
@@ -186,7 +187,10 @@ async def subscribe(
                 metrics[metric_name] = metric_value
 
         # track metrics per cell id
-        kpi[cellid] = metrics
+        kpi[(e2_node_id, cellid)] = metrics
+
+        # increment message counter
+        kpi[msg_cnt_key] = kpi.get(msg_cnt_key, 0) + 1
 
 
 async def track_kpi(
@@ -194,7 +198,7 @@ async def track_kpi(
     sdl_client: sdk.SDLClient,
     e2_node_id: str,
     e2_node: E2Node,
-    kpi: Dict[str, Dict[str, int]],
+    kpi: Dict[Tuple[str, str], Dict[str, int]],
 ) -> None:
     """
     kpi = {cid: {metric_name: metric_value, ...}, ...}
