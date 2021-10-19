@@ -59,7 +59,10 @@ async def subscribe(
     ):
         meas_info_list = MeasurementInfoList()
         for measurement in report_style.measurements:
-            CUSTOM_COLLECTOR.register(measurement.id, measurement.name)
+            meas_id = measurement.id
+            if type(meas_id) is str:
+                meas_id = int(measurement.id.replace("value:", ""))
+            CUSTOM_COLLECTOR.register(meas_id, measurement.name)
             meas_info_list.value.append(
                 MeasurementInfoItem(
                     meas_type=MeasurementType(
