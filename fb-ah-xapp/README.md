@@ -1,5 +1,42 @@
-airhop_pci is the adapter xApp that enables the Airhop eSON service to
+# fb-ah-xapp
+
+This app is the adapter xApp that enables the Airhop eSON service to
 monitor and control RANs via RIC platforms using a RIC SDK.
+
+This app is an adapter to Airhop's eSON service, covering physical cell identifier
+(PCI) confict resolution, and mobility load balancing (MLB).
+
+This app uses the ONF Python SDK.
+
+## Functionality
+
+An E2 subscription to the rc-pre service model is made. Cell information such as PCI
+and neighbor information is received pushed to the Airhop eSON service.
+
+PCI information of the cell and its neighbors are used by the eSON PCI conflict algorithm.
+
+Cell individual offset of the cell and its neighbors are used by the eSON MLB algorithm.
+
+An E2 subscription to the KPM service model is also made. The cell capacity information
+is sent to the eSON service and used by the MLB algorithm.
+
+The app listens to changes from the eSON service. PCI change requests are issued
+via the eSON's conflict resolution algorithm, neighbor cell individual offset
+change requests are issued by eSON's MLB algorithm. When a change request is received,
+the app will issue an E2 control message to the expected E2 node.
+
+This all also responds to http requests to view or modify the cell information.
+
+
+## Usage
+
+Since the Airhop eSON service is a commercial product, it is not included in this
+package, instead a test server is included that mimics messages that could be sent
+from the eSON service. The messages do not perform the PCI conflict and MLB algorithms,
+but will send arbitrary PCI change requests and cell individual offset change requests
+to exercise the E2 control pathways. This test server is called `ah-eson-test-server`
+and is included in this repository.
+
 
 # Basic Usage
 
