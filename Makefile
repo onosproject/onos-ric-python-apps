@@ -52,6 +52,14 @@ _IMAGES=$(patsubst %,image/%,$(IMAGES))
 image/all: $(_IMAGES)
 images: $(_IMAGES)
 
+kind: images
+	docker tag fb-kpimon-xapp:latest onosproject/fb-kpimon-xapp:latest
+	kind load docker-image onosproject/fb-kpimon-xapp:latest
+	docker tag fb-ah-xapp:latest onosproject/fb-ah-xapp:latest
+	kind load docker-image onosproject/fb-ah-xapp:latest
+	docker tag ah-eson-test-server:latest onosproject/ah-eson-test-server:latest
+	kind load docker-image onosproject/ah-eson-test-server:latest
+
 build-tools: # @HELP install the ONOS build tools if needed
 	@if [ ! -d "../build-tools" ]; then cd .. && git clone https://github.com/onosproject/build-tools.git; fi
 
