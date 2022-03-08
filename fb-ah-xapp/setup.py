@@ -8,5 +8,5 @@ setup(
     name="airhop_pci",
     packages=find_packages(),
     python_requires=">=3.7",
-    install_requires=["onos-ric-sdk-python>=0.1.7"],
+    install_requires=["onos-ric-sdk-python>=0.2.3"],
 )
