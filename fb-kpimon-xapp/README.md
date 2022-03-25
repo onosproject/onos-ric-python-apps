@@ -4,23 +4,12 @@ key performance indicator app
 This app subscribes to the kpm (key performance metrics) service model and exposes
 the metrics via a prometheus gauge endpoint.
 
-## Build image
-
-From the root directory of this repo, run:
-```
-make image/fb-kpimon-xapp
-```
-
 ## Deploy container
 
-By convention, helm charts are stored in the sdran-helm-chart repository.
-
-from the root directory of sdran-helm-chart repository, deploy to kubernetes:
+You can deploy the `fb-kpimon-xapp` image using helm:
 ```
-helm install -n micro-onos \
-    --set image.repository=localhost/fb-kpimon-xapp \
-    --set image.tag=latest \
-    fb-kpimon-xapp ./fb-kpimon-xapp
+helm repo add sdran https://sdrancharts.onosproject.org
+helm install -n micro-onos fb-kpimon-xapp sdran/fb-kpimon-xapp
 ```
 
 uninstall:
