@@ -7,5 +7,5 @@ setup(
     name="kpimon",
     packages=find_packages(),
     python_requires=">=3.7",
-    install_requires=["onos-ric-sdk-python>=0.2.4"],
+    install_requires=["onos-ric-sdk-python>=0.2.5"],
 )
