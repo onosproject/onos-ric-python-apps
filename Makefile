@@ -1,3 +1,8 @@
+# SPDX-FileCopyrightText: Copyright 2004-present Facebook. All Rights Reserved.
+# SPDX-FileCopyrightText: 2019-present Open Networking Foundation <info@opennetworking.org>
+#
+# SPDX-License-Identifier: Apache-2.0
+
 .PHONY: help
 help:  ## display help text
 	@grep -E '^[-a-zA-Z_/\%]+:.*?## .*$$' $(MAKEFILE_LIST) \
@@ -75,6 +80,12 @@ jenkins-publish: build-tools # @HELP Jenkins calls this to publish artifacts
 	VERSIONFILE=VERSION.fb-kpimon-xapp ../build-tools/release-merge-commit
 
 jenkins-test:  # @HELP run the unit tests and source code validation producing a junit style report for Jenkins
-jenkins-test: build-tools
+jenkins-test: build-tools license
 
-test: build-tools
+reuse-tool: # @HELP install reuse if not present
+	command -v reuse || python3 -m pip install --user reuse
+
+license: reuse-tool # @HELP run license checks
+	reuse lint
+
+test: build-tools license
