@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: Copyright 2020-present Facebook. All Rights Reserved.
+#
+# SPDX-License-Identifier: MIT
+
 import sys
 import os
 from os import listdir
