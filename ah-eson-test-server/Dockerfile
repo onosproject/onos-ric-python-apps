@@ -6,7 +6,7 @@ FROM python:3.8-slim
 
 WORKDIR /code
 
-RUN pip install --upgrade pip grpcio protobuf --no-cache-dir
+RUN pip install --upgrade pip grpcio 'protobuf<4' --no-cache-dir
 
 COPY ah-eson-test-server .
 
