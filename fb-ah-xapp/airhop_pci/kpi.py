@@ -108,14 +108,12 @@ async def subscribe(
             ),
             payload=action_payload,
         )
-        actions.append(
-            action
-        )
+        actions.append(action)
     logging.info(f"Subscribing kpm node {e2_node_id}")
 
     trigger_def = E2SmKpmEventTriggerDefinition()
-    trigger_def.event_definition_formats.event_definition_format1 = E2SmKpmEventTriggerDefinitionFormat1(
-        reporting_period=1000
+    trigger_def.event_definition_formats.event_definition_format1 = (
+        E2SmKpmEventTriggerDefinitionFormat1(reporting_period=1000)
     )
     async for (header, message) in e2_client.subscribe(
         e2_node_id=e2_node_id,
@@ -137,12 +135,15 @@ async def subscribe(
         ind_header = E2SmKpmIndicationHeader()
         ind_header.parse(header)
         ts = int.from_bytes(
-            ind_header.indication_header_formats.indication_header_format1.collet_start_time.value, "big"
+            ind_header.indication_header_formats.indication_header_format1.collet_start_time.value,
+            "big",
         )
 
         ind_message = E2SmKpmIndicationMessage()
         ind_message.parse(message)
-        subscript_id = ind_message.indication_message_formats.indication_message_format1.subscript_id.value
+        subscript_id = (
+            ind_message.indication_message_formats.indication_message_format1.subscript_id.value
+        )
         cellid = sub_map[subscript_id]
 
         logging.debug(f"cellid:{cellid} hdr:{ind_header} msg:{ind_message}")
@@ -150,8 +151,14 @@ async def subscribe(
         # track metrics per cell
         metrics = {}
         msg_cnt_key = ("global", "kpi_ind_message_count")  # key for msg count
-        meas_info_list = ind_message.indication_message_formats.indication_message_format1.meas_info_list.value
-        for meas_data_item in ind_message.indication_message_formats.indication_message_format1.meas_data.value:
+        meas_info_list = (
+            ind_message.indication_message_formats.indication_message_format1.meas_info_list.value
+        )
+        for (
+            meas_data_item
+        ) in (
+            ind_message.indication_message_formats.indication_message_format1.meas_data.value
+        ):
             for idx, meas_record_item in enumerate(meas_data_item.meas_record.value):
                 _, metric_value = betterproto.which_one_of(
                     meas_record_item, "measurement_record_item"
