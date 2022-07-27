@@ -6,8 +6,8 @@
 
 import argparse
 import asyncio
-import json
 import logging
+from operator import le
 from typing import Dict, Optional, Tuple
 
 from aiohttp import web
@@ -32,28 +32,108 @@ from onos_api.e2t.e2.v1beta1 import (
     SubsequentActionType,
     TimeToWait,
 )
-from onos_e2_sm.e2sm_rc_pre.v2 import (
-    # subscription
-    E2SmRcPreEventTriggerDefinition,
-    E2SmRcPreEventTriggerDefinitionFormat1,
-    E2SmRcPreIndicationHeader,
-    E2SmRcPreIndicationMessage,
-    RcPreTriggerType,
-    # control
-    CellGlobalId,
-    E2SmRcPreControlHeader,
-    E2SmRcPreControlHeaderFormat1,
-    E2SmRcPreControlMessage,
-    E2SmRcPreControlMessageFormat1,
-    E2SmRcPreControlOutcome,
-    RanparameterDefItem,
+
+from onos_e2_sm.asn1.v1 import BitString
+
+# Messages
+from onos_e2_sm.e2sm_rc.v1 import (
+    E2SmRcEventTriggerFormat3,
+    E2SmRcEventTriggerFormat3Item,
+    RicEventTriggerConditionId,
+    E2SmRcEventTrigger,
+    RicEventTriggerFormats,
+    E2SmRcIndicationHeader,
+    E2SmRcIndicationMessage,
+    E2SmRcActionDefinition,
+    E2SmRcActionDefinitionFormat1,
+    E2SmRcActionDefinitionFormat1Item,
     RanparameterId,
-    RanparameterName,
-    RanparameterType,
+    RicActionDefinitionFormats,
+    RicStyleType,
+    E2SmRcControlHeader,
+    RicControlHeaderFormats,
+    E2SmRcControlHeaderFormat1,
+    RicControlMessageFormats,
+    E2SmRcControlMessageFormat1,
+    E2SmRcControlMessageFormat1Item,
+    RicControlActionId,
+    E2SmRcControlMessage,
+    RanparameterStructure,
+    RanparameterStructureItem,
+    RanparameterValueType,
     RanparameterValue,
-    RcPreCommand,
-    RicControlMessagePriority,
+    RanparameterId,
+    RanparameterValueTypeChoiceElementFalse,
+    RanparameterValueTypeChoiceStructure,
+    E2SmRcControlOutcome,
 )
+
+# Identifiers
+from onos_e2_sm.e2sm_rc.v1 import (
+    Ueid,
+    UeidGnb,
+    AmfUeNgapId,
+    Guami,
+    Plmnidentity,
+    AmfregionId,
+    Amfpointer,
+    AmfsetId,
+    Cgi,
+    UeidGnbCuF1ApIdList,
+    UeidGnbCuCpE1ApIdList,
+    Ranueid,
+    NgRannodeUexnApid,
+    GlobalGnbId,
+    GlobalNgrannodeId,
+    UeidGnbCuCpF1ApIdItem,
+    GnbCuUeF1ApId,
+    UeidGnbCuCpE1ApIdItem,
+    GnbCuCpUeE1ApId,
+    GnbId,
+)
+
+
+# from onos_e2_sm.e2sm_rc_pre.v2 import (
+#     # subscription
+#     E2SmRcPreEventTriggerDefinition,
+#     E2SmRcPreEventTriggerDefinitionFormat1,
+#     E2SmRcPreIndicationHeader,
+#     E2SmRcPreIndicationMessage,
+#     RcPreTriggerType,
+#     # control
+#     CellGlobalId,
+#     E2SmRcPreControlHeader,
+#     E2SmRcPreControlHeaderFormat1,
+#     E2SmRcPreControlMessage,
+#     E2SmRcPreControlMessageFormat1,
+#     E2SmRcPreControlOutcome,
+#     RanparameterDefItem,
+#     # RanparameterId,
+#     RanparameterName,
+#     RanparameterType,
+#     RanparameterValue,
+#     RcPreCommand,
+#     RicControlMessagePriority,
+# )
+
+
+e2nodeInformationChangeID1CellConfigChange = 1
+e2nodeInformationChangeID2CellNeighborRelChange = 2
+
+ricStyleType = 200
+controlActionID = 1
+
+
+ranParamIDForPCI = 1
+ranParamIDForNrPCI = 11
+ranParamIDForEUTRAPCI = 12
+ranParamIDForCGI = 2
+ranParamIDForNrCGI = 21
+ranParamIDForECGI = 22
+ranParamIDForNrCGIPLMNID = 211
+ranParamIDForNrCGICellID = 212
+ranParamIDForECGIPLMNID = 221
+ranParamIDForECGICellID = 222
 
 
 async def async_main(
@@ -116,118 +196,69 @@ async def subscribe_e2(
     cells_tracker: CellsTracker,
     mlb_disable_control: bool,
 ) -> None:
-    if args.trigger_periodic_s:
-        trigger = E2SmRcPreEventTriggerDefinition(
-            event_definition_format1=E2SmRcPreEventTriggerDefinitionFormat1(
-                trigger_type=RcPreTriggerType.RC_PRE_TRIGGER_TYPE_PERIODIC,
-                reporting_period_ms=args.trigger_periodic_s * 1000,
+
+    logging.info(f"Subscribing rc node {e2_node_id}")
+
+    trigger_e2_node_id_change = E2SmRcEventTriggerFormat3Item(
+        ric_event_trigger_condition_id=RicEventTriggerConditionId(
+            value=e2nodeInformationChangeID1CellConfigChange,
+        ),
+        e2_node_info_change_id=e2nodeInformationChangeID1CellConfigChange,
+    )
+
+    trigger_e2_node_neighbor_id_change = E2SmRcEventTriggerFormat3Item(
+        ric_event_trigger_condition_id=RicEventTriggerConditionId(
+            value=e2nodeInformationChangeID2CellNeighborRelChange,
+        ),
+        e2_node_info_change_id=e2nodeInformationChangeID2CellNeighborRelChange,
+    )
+
+    trigger = E2SmRcEventTrigger(
+        ric_event_trigger_formats=RicEventTriggerFormats(
+            event_trigger_format3=E2SmRcEventTriggerFormat3(
+                e2_node_info_change_list=[
+                    trigger_e2_node_id_change,
+                    trigger_e2_node_neighbor_id_change,
+                ]
             )
         )
-    else:
-        trigger = E2SmRcPreEventTriggerDefinition(
-            event_definition_format1=E2SmRcPreEventTriggerDefinitionFormat1(
-                trigger_type=RcPreTriggerType.RC_PRE_TRIGGER_TYPE_UPON_CHANGE,
-            )
-        )
+    )
 
-    logging.info(f"Subscribing rc-pre node {e2_node_id}")
-
-    # load previously saved cell information state from topo
-    for cell in await sdl_client.get_cells(e2_node_id):
-        try:
-            data = await sdl_client.get_cell_data(
-                e2_node_id,
-                cell.cell_global_id.value,
-                [
-                    "E2SmRcPreIndicationHeader",
-                    "E2SmRcPreIndicationMessage",
-                    "onos.topo.Location",
-                    "onos.topo.Coverage",
+    ad = E2SmRcActionDefinition(
+        ric_style_type=RicStyleType(value=3),
+        ric_action_definition_formats=RicActionDefinitionFormats(
+            action_definition_format1=E2SmRcActionDefinitionFormat1(
+                ran_p_to_be_reported_list=[
+                    E2SmRcActionDefinitionFormat1Item(
+                        ran_parameter_id=RanparameterId(value=21528)
+                    )
                 ],
             )
-            if data is None:
-                logging.warning(
-                    f"get_cell_data empty for {e2_node_id} id:0x{cell.cell_global_id.value}"
-                )
-                continue
-        except sdk.exceptions.ClientRuntimeError:
-            logging.exception(
-                f"get_cell_data failed for {e2_node_id} id:0x{cell.cell_global_id.value}"
-            )
-            continue
-
-        header_json, message_json, location, coverage = data
-
-        if header_json is None or message_json is None:
-            logging.info(
-                f"Found no data for {e2_node_id} id:0x{cell.cell_global_id.value}"
-            )
-        else:
-            ind_header = E2SmRcPreIndicationHeader().from_json(
-                header_json.decode("utf-8")
-            )
-            ind_message = E2SmRcPreIndicationMessage().from_json(
-                message_json.decode("utf-8")
-            )
-
-            changes = await process_indication(
-                e2_node_id,
-                e2_client,
-                sdl_client,
-                eson_client,
-                cells_tracker,
-                ind_header,
-                ind_message,
-                mlb_disable_control,
-            )
-
-            if not changes:
-                logging.warning(
-                    f"Data found for {e2_node_id} id:0x{cell.cell_global_id.value} but no changes detected"
-                )
-                continue
-
-            logging.info(f"Loaded saved ncgi 0x{changes.ncgi:x}")
-
-            if location is not None:
-                loc = json.loads(location.decode("utf-8"))
-                cells_tracker.ncgi_cells_map[changes.ncgi].lat = loc["lat"]
-                cells_tracker.ncgi_cells_map[changes.ncgi].lng = loc["lng"]
-                logging.info(f"Loaded location for 0x{changes.ncgi:x}")
-
-            if coverage is not None:
-                cov = json.loads(coverage.decode("utf-8"))
-                cells_tracker.ncgi_cells_map[changes.ncgi].azimuth = cov["azimuth"]
-                cells_tracker.ncgi_cells_map[changes.ncgi].arc_width = cov["arc_width"]
-                cells_tracker.ncgi_cells_map[changes.ncgi].tilt = cov["tilt"]
-                cells_tracker.ncgi_cells_map[changes.ncgi].height = cov["height"]
-                logging.info(f"Loaded coverage for 0x{changes.ncgi:x}")
-
+        ),
+    )
     async for (header, message) in e2_client.subscribe(
         e2_node_id=e2_node_id,
-        service_model_name="oran-e2sm-rc-pre",
-        service_model_version="v2",
-        subscription_id="fb-ah_oran-e2sm-rc-pre_sub",
+        service_model_name="oran-e2sm-rc",
+        service_model_version="v1",
+        subscription_id="fb-ah_oran-e2sm-rc",
         trigger=bytes(trigger),
         actions=[
             Action(
-                id=10,
+                id=3,
                 type=ActionType.ACTION_TYPE_REPORT,
-                subsequent_action=SubsequentAction(
-                    type=SubsequentActionType.SUBSEQUENT_ACTION_TYPE_CONTINUE,
-                    time_to_wait=TimeToWait.TIME_TO_WAIT_ZERO,
-                ),
-            )
+                payload=bytes(ad),
+            ),
         ],
     ):
+
         if len(header) == 0 or len(message) == 0:
             logging.warning(
                 f"skipping empty indication header/message from '{e2_node_id}'..."
             )
             continue
 
-        ind_header = E2SmRcPreIndicationHeader().parse(header)
-        ind_message = E2SmRcPreIndicationMessage().parse(message)
+        ind_header = E2SmRcIndicationHeader().parse(header)
+        ind_message = E2SmRcIndicationMessage().parse(message)
 
         changes = await process_indication(
             e2_node_id,
@@ -240,31 +271,37 @@ async def subscribe_e2(
             mlb_disable_control,
         )
 
+        logging.info(f"Changes indicated: {changes}")
+
         if not changes:
             continue
 
-        cell_id = format(changes.nci, "x")
+        for change in changes:
+            cell_id = format(change.nci, "x")
 
-        # due to intricacies of the system, a few retries are standard practice
-        for retry_count in range(5):
-            try:
-                # save cell information state into topo to be used if app restarts
-                await sdl_client.set_cell_data(
-                    e2_node_id,
-                    cell_id,
-                    {
-                        "E2SmRcPreIndicationHeader": bytes(
-                            ind_header.to_json(), "utf-8"
-                        ),
-                        "E2SmRcPreIndicationMessage": bytes(
-                            ind_message.to_json(), "utf-8"
-                        ),
-                    },
-                )
-                break
-            except sdk.exceptions.ClientRuntimeError:
-                logging.exception(f"set_cell_data failed, try {retry_count + 1}")
-            asyncio.sleep(0.05 * retry_count)
+            logging.info(f"setting_cells from '{e2_node_id}' cell '{cell_id}'...")
+
+            # due to intricacies of the system, a few retries are standard practice
+            for retry_count in range(5):
+                try:
+                    # save cell information state into topo to be used if app restarts
+                    await sdl_client.set_cell_data(
+                        e2_node_id,
+                        cell_id,
+                        {
+                            "E2SmRcIndicationHeader": bytes(
+                                ind_header.to_json(), "utf-8"
+                            ),
+                            "E2SmRcIndicationMessage": bytes(
+                                ind_message.to_json(), "utf-8"
+                            ),
+                        },
+                    )
+                    logging.info(f"set_cell_data {e2_node_id} {cell_id}")
+                    break
+                except sdk.exceptions.ClientRuntimeError:
+                    logging.exception(f"set_cell_data failed, try {retry_count + 1}")
+                asyncio.sleep(0.05 * retry_count)
 
 
 async def process_indication(
@@ -273,136 +310,143 @@ async def process_indication(
     sdl_client: sdk.SDLClient,
     eson_client: AirhopEsonClient,
     cells_tracker: CellsTracker,
-    ind_header: E2SmRcPreIndicationHeader,
-    ind_message: E2SmRcPreIndicationMessage,
+    ind_header: E2SmRcIndicationHeader,
+    ind_message: E2SmRcIndicationMessage,
     mlb_disable_control: bool,
 ) -> Optional[CellChanges]:
 
     changes = cells_tracker.update(
         e2_node_id=e2_node_id,
-        indication_header=ind_header.indication_header_format1,
-        indication_message=ind_message.indication_message_format1,
+        indication_header=ind_header.ric_indication_header_formats.indication_header_format1,
+        indication_message=ind_message.ric_indication_message_formats.indication_message_format3,
     )
     if not changes:
         return
-    logging.debug(f"Changes indicated: {changes}")
 
     coros = []
-    if changes.cell_to_register:
-        action = "Updating pci" if changes.is_update else "Registering new cell"
-        logging.info(
-            f"{action} for '{e2_node_id}': "
-            f"ncgi=0x{changes.ncgi:x} "
-            f"pci={changes.cell_to_register.pci}"
-        )
 
-        # Agreed offline with Radisys what these parameters should be:
-
-        # hysteresis = +1dB
-        # We expect to receive 2, because of
-        # The IE Hysteresis is a parameter used within the entry and leave condition of an event
-        # triggered reporting condition. The actual value is field value * 0.5 dB.
-
-        # a3offset = +2dB
-        # We expect to receive 4, because of
-        # Offset value(s) to be used in NR measurement report triggering condition for event
-        # a3/a6. The actual value is field value * 0.5 dB.
-
-        # all others are 0dB
-        # We expect to receive 15 for 0dB.
-
-        coros.append(
-            eson_client.register(
-                cells=[
-                    Cell(
-                        ncgi=changes.ncgi,
-                        cell_size=CellSize.CELL_SIZE_OUTDOOR_SMALL,
-                        dl_nrarfcn=changes.cell_to_register.fcn,
-                        ul_nrarfcn=changes.cell_to_register.fcn,
-                        pci=changes.cell_to_register.pci,
-                        pci_pool=PciPool(
-                            [
-                                PciRange(lower_pci=1, upper_pci=10),
-                                PciRange(lower_pci=20, upper_pci=300),
-                            ]
-                        ),
-                        neighbors=NeighborList(
-                            [
-                                ah_make_neighbor(n_ncgi, n_pci, n_fcn)
-                                for n_ncgi, (n_pci, n_fcn) in sorted(
-                                    changes.cell_to_register.neighbors.items()
-                                )
-                            ]
-                        ),
-                        vendor_info="vendor_info",
-                        capacity_class_value=100,  # Airhop(BG) says set to 100.
-                        event_a3_report_configs=EventA3ReportConfig(
-                            nrarfcn=changes.cell_to_register.fcn,
-                            offset=4,  # +2dB, value * 0.5 dB
-                            hysteresis=2,  # +1dB, value * 0.5 dB
-                        ),
-                        cell_specific_offsets=CellSpecificOffsets(
-                            cio=15,  # 0dB, value 15
-                            offset_freq=15,  # 0dB, value 15
-                            q_offset=15,  # 0dB, value 15
-                        ),
-                    ),
-                ]
+    for change in changes:
+        if change.cell_to_register:
+            action = "Updating pci" if change.is_update else "Registering new cell"
+            logging.info(
+                f"{action} for '{e2_node_id}': "
+                f"ncgi=0x{change.ncgi:x} "
+                f"pci={change.cell_to_register.pci}"
             )
-        )
 
-        # best effort set initial cell individual offset (cio) for all neighbors
-        if mlb_disable_control:
-            logging.warning(
-                f"MLB --mlb-disable-control is set, skipping initial setting"
-            )
-        else:
-            for neighbor_ncgi, _ in sorted(changes.cell_to_register.neighbors.items()):
-                logging.info(
-                    f"MLB initial OCN ncgi:0x{changes.ncgi:x} neighbor_ncgi:0x{neighbor_ncgi:x}"
+            # Agreed offline with Radisys what these parameters should be:
+
+            # hysteresis = +1dB
+            # We expect to receive 2, because of
+            # The IE Hysteresis is a parameter used within the entry and leave condition of an event
+            # triggered reporting condition. The actual value is field value * 0.5 dB.
+
+            # a3offset = +2dB
+            # We expect to receive 4, because of
+            # Offset value(s) to be used in NR measurement report triggering condition for event
+            # a3/a6. The actual value is field value * 0.5 dB.
+
+            # all others are 0dB
+            # We expect to receive 15 for 0dB.
+
+            coros.append(
+                eson_client.register(
+                    cells=[
+                        Cell(
+                            ncgi=change.ncgi,
+                            cell_size=CellSize.CELL_SIZE_OUTDOOR_SMALL,
+                            dl_nrarfcn=change.cell_to_register.fcn,
+                            ul_nrarfcn=change.cell_to_register.fcn,
+                            pci=change.cell_to_register.pci,
+                            pci_pool=PciPool(
+                                [
+                                    PciRange(lower_pci=1, upper_pci=10),
+                                    PciRange(lower_pci=20, upper_pci=300),
+                                ]
+                            ),
+                            neighbors=NeighborList(
+                                [
+                                    ah_make_neighbor(n_ncgi, n_pci, n_fcn)
+                                    for n_ncgi, (n_pci, n_fcn) in sorted(
+                                        change.cell_to_register.neighbors.items()
+                                    )
+                                ]
+                            ),
+                            vendor_info="vendor_info",
+                            capacity_class_value=100,  # Airhop(BG) says set to 100.
+                            event_a3_report_configs=EventA3ReportConfig(
+                                nrarfcn=change.cell_to_register.fcn,
+                                offset=4,  # +2dB, value * 0.5 dB
+                                hysteresis=2,  # +1dB, value * 0.5 dB
+                            ),
+                            cell_specific_offsets=CellSpecificOffsets(
+                                cio=15,  # 0dB, value 15
+                                offset_freq=15,  # 0dB, value 15
+                                q_offset=15,  # 0dB, value 15
+                            ),
+                        ),
+                    ]
                 )
-                coros.append(
-                    update_mlb_cio(
-                        e2_client=e2_client,
-                        e2_node_id=e2_node_id,
-                        cgi=changes.cell_to_register.cgi,
-                        neighbor_cgi=cgiFromNcgi(neighbor_ncgi),
-                        cell_individual_offset=15,  # 0dB, value 15
-                        q_offset=15,  # 0dB, value 15
+            )
+
+            # best effort set initial cell individual offset (cio) for all neighbors
+            if mlb_disable_control:
+                logging.warning(
+                    f"MLB --mlb-disable-control is set, skipping initial setting"
+                )
+            else:
+                for neighbor_ncgi, _ in sorted(
+                    change.cell_to_register.neighbors.items()
+                ):
+                    logging.info(
+                        f"MLB initial OCN ncgi:0x{change.ncgi:x} neighbor_ncgi:0x{neighbor_ncgi:x}"
                     )
-                )
+                    coros.append(
+                        update_mlb_cio(
+                            e2_client=e2_client,
+                            e2_node_id=e2_node_id,
+                            cgi=change.cell_to_register.cgi,
+                            neighbor_cgi=cgiFromNcgi(neighbor_ncgi),
+                            cell_individual_offset=15,  # 0dB, value 15
+                            q_offset=15,  # 0dB, value 15
+                        )
+                    )
 
-    if changes.neighbors_to_add:
-        logging.info(
-            f"Adding neighbor: "
-            f"ncgi=0x{changes.ncgi:x} "
-            f"neighbors={sorted(changes.neighbors_to_add.items())}"
-        )
-        coros.append(eson_client.add_neighbor(changes.ncgi, changes.neighbors_to_add))
+        if change.neighbors_to_add:
+            logging.info(
+                f"Adding neighbor: "
+                f"ncgi=0x{change.ncgi:x} "
+                f"neighbors={sorted(change.neighbors_to_add.items())}"
+            )
+            coros.append(eson_client.add_neighbor(change.ncgi, change.neighbors_to_add))
 
-    if changes.neighbors_to_update:
-        logging.info(
-            f"Updating neighbor: "
-            f"ncgi=0x{changes.ncgi:x} "
-            f"neighbors={[(hex(n), p) for n, p in sorted(changes.neighbors_to_update.items())]}"
-        )
-        # airhop's "add" call also used to update neighbor information
-        coros.append(
-            eson_client.add_neighbor(changes.ncgi, changes.neighbors_to_update)
-        )
+        if change.neighbors_to_update:
+            logging.info(
+                f"Updating neighbor: "
+                f"ncgi=0x{change.ncgi:x} "
+                f"neighbors={[(hex(n), p) for n, p in sorted(change.neighbors_to_update.items())]}"
+            )
+            # airhop's "add" call also used to update neighbor information
+            coros.append(
+                eson_client.add_neighbor(change.ncgi, change.neighbors_to_update)
+            )
 
-    if changes.neighbors_to_remove:
-        logging.info(
-            f"Removing neighbor: "
-            f"ncgi=0x{changes.ncgi:x} "
-            f"neighbors={[hex(n) for n in sorted(changes.neighbors_to_remove)]}"
-        )
-        coros.append(
-            eson_client.remove_neighbor(changes.ncgi, changes.neighbors_to_remove)
-        )
+        if change.neighbors_to_remove:
+            logging.info(
+                f"Removing neighbor: "
+                f"ncgi=0x{change.ncgi:x} "
+                f"neighbors={[hex(n) for n in sorted(change.neighbors_to_remove)]}"
+            )
+            coros.append(
+                eson_client.remove_neighbor(change.ncgi, change.neighbors_to_remove)
+            )
 
-    await asyncio.gather(*coros, return_exceptions=True)
+        coros_results = await asyncio.gather(*coros, return_exceptions=True)
+        for result in coros_results:
+            if isinstance(result, Exception):
+                logging.info(f"exception in coro {repr(result)}")
 
+    logging.info(f"end process indications")
     return changes
 
 
@@ -534,36 +578,153 @@ async def monitor_proposed_changes(
 
 
 async def update_pci(
-    e2_client: sdk.E2Client, e2_node_id: str, cgi: CellGlobalId, new_pci: int
+    e2_client: sdk.E2Client, e2_node_id: str, cgi: Cgi, new_pci: int
 ) -> bool:
     """
     return True if successful
     """
-    hdr = E2SmRcPreControlHeader(
-        control_header_format1=E2SmRcPreControlHeaderFormat1(
-            rc_command=RcPreCommand.RC_PRE_COMMAND_SET_PARAMETERS,
-            cgi=cgi,
-        )
-    )
-
-    msg = E2SmRcPreControlMessage(
-        control_message=E2SmRcPreControlMessageFormat1(
-            # TODO: this should probably be a list, or outcomes should not be a list
-            parameter_type=RanparameterDefItem(
-                ran_parameter_id=RanparameterId(value=1),  # unique within this message
-                ran_parameter_name=RanparameterName(value="pci"),
-                ran_parameter_type=RanparameterType.RANPARAMETER_TYPE_INTEGER,
+    ue_id = Ueid(
+        g_nb_ueid=UeidGnb(
+            amf_ue_ngap_id=AmfUeNgapId(value=0),
+            guami=Guami(
+                p_lmnidentity=Plmnidentity(value=bytes(bytearray(3))),
+                a_mfregion_id=AmfregionId(
+                    value=BitString(value=bytes(bytearray(1)), len=8)
+                ),
+                a_mfpointer=Amfpointer(
+                    value=BitString(value=bytes(bytearray(1)), len=6)
+                ),
+                a_mfset_id=AmfsetId(value=BitString(value=bytes(bytearray(2)), len=10)),
             ),
-            parameter_val=RanparameterValue(value_int=new_pci),
+            g_nb_cu_ue_f1_ap_id_list=UeidGnbCuF1ApIdList(
+                value=[
+                    UeidGnbCuCpF1ApIdItem(g_nb_cu_ue_f1_ap_id=GnbCuUeF1ApId(value=0))
+                ]
+            ),
+            g_nb_cu_cp_ue_e1_ap_id_list=UeidGnbCuCpE1ApIdList(
+                value=[
+                    UeidGnbCuCpE1ApIdItem(
+                        g_nb_cu_cp_ue_e1_ap_id=GnbCuCpUeE1ApId(value=0)
+                    ),
+                ]
+            ),
+            ran_ueid=Ranueid(value=bytes(bytearray(8))),
+            m_ng_ran_ue_xn_ap_id=NgRannodeUexnApid(value=0),
+            global_gnb_id=GlobalGnbId(
+                p_lmnidentity=Plmnidentity(value=bytes(bytearray(3))),
+                g_nb_id=GnbId(g_nb_id=BitString(value=bytes(bytearray(4)), len=32)),
+            ),
+            global_ng_rannode_id=GlobalNgrannodeId(
+                g_nb=GlobalGnbId(
+                    p_lmnidentity=Plmnidentity(value=bytes(bytearray(3))),
+                    g_nb_id=GnbId(g_nb_id=BitString(value=bytes(bytearray(4)), len=32)),
+                )
+            ),
         )
     )
 
+    hdr = E2SmRcControlHeader(
+        ric_control_header_formats=RicControlHeaderFormats(
+            control_header_format1=E2SmRcControlHeaderFormat1(
+                ue_id=ue_id,
+                ric_control_action_id=RicControlActionId(value=controlActionID),
+                ric_style_type=RicStyleType(value=ricStyleType),
+            )
+        )
+    )
+
+    # Defines the new PCI structure
+    scPciRanParamItem = E2SmRcControlMessageFormat1Item(
+        ran_parameter_id=RanparameterId(value=ranParamIDForPCI),
+        ran_parameter_value_type=RanparameterValueType(
+            ran_p_choice_structure=RanparameterValueTypeChoiceStructure(
+                ran_parameter_structure=RanparameterStructure(
+                    sequence_of_ran_parameters=[
+                        RanparameterStructureItem(
+                            ran_parameter_id=RanparameterId(
+                                value=ranParamIDForNrPCI,
+                            ),
+                            ran_parameter_value_type=RanparameterValueType(
+                                ran_p_choice_element_false=RanparameterValueTypeChoiceElementFalse(
+                                    ran_parameter_value=RanparameterValue(
+                                        value_int=new_pci
+                                    )
+                                )
+                            ),
+                        ),
+                    ]
+                )
+            )
+        ),
+    )
+
+    cgiRanParamItem = E2SmRcControlMessageFormat1Item(
+        ran_parameter_id=RanparameterId(value=ranParamIDForCGI),
+        ran_parameter_value_type=RanparameterValueType(
+            ran_p_choice_structure=RanparameterValueTypeChoiceStructure(
+                ran_parameter_structure=RanparameterStructure(
+                    sequence_of_ran_parameters=[
+                        RanparameterStructureItem(
+                            ran_parameter_id=RanparameterId(
+                                value=ranParamIDForNrCGI,
+                            ),
+                            ran_parameter_value_type=RanparameterValueType(
+                                ran_p_choice_structure=RanparameterValueTypeChoiceStructure(
+                                    ran_parameter_structure=RanparameterStructure(
+                                        sequence_of_ran_parameters=[
+                                            RanparameterStructureItem(
+                                                ran_parameter_id=RanparameterId(
+                                                    value=ranParamIDForNrCGIPLMNID,
+                                                ),
+                                                ran_parameter_value_type=RanparameterValueType(
+                                                    ran_p_choice_element_false=RanparameterValueTypeChoiceElementFalse(
+                                                        ran_parameter_value=RanparameterValue(
+                                                            value_oct_s=cgi.n_r_cgi.p_lmnidentity.value,
+                                                        )
+                                                    )
+                                                ),
+                                            ),
+                                            RanparameterStructureItem(
+                                                ran_parameter_id=RanparameterId(
+                                                    value=ranParamIDForNrCGICellID,
+                                                ),
+                                                ran_parameter_value_type=RanparameterValueType(
+                                                    ran_p_choice_element_false=RanparameterValueTypeChoiceElementFalse(
+                                                        ran_parameter_value=RanparameterValue(
+                                                            value_bit_s=cgi.n_r_cgi.n_rcell_identity.value
+                                                        ),
+                                                    )
+                                                ),
+                                            ),
+                                        ],
+                                    )
+                                )
+                            ),
+                        )
+                    ]
+                )
+            )
+        ),
+    )
+
+    msg = E2SmRcControlMessage(
+        ric_control_message_formats=RicControlMessageFormats(
+            control_message_format1=E2SmRcControlMessageFormat1(
+                ran_p_list=[
+                    scPciRanParamItem,
+                    cgiRanParamItem,
+                ]
+            )
+        )
+    )
+
+    logging.info(f"Updating PCI: {new_pci}")
     # TODO: don't catch exception in this function
     try:
         response = await e2_client.control(
             e2_node_id=e2_node_id,
-            service_model_name="oran-e2sm-rc-pre",
-            service_model_version="v2",
+            service_model_name="oran-e2sm-rc",
+            service_model_version="v1",
             header=bytes(hdr),
             message=bytes(msg),
         )
@@ -571,9 +732,9 @@ async def update_pci(
             logging.warning(f"Control ACK is set to `NO_ACK`, skipping...")
             return False
 
-        outcome = E2SmRcPreControlOutcome()
+        outcome = E2SmRcControlOutcome()
         outcome.parse(response)
-        logging.info(f"Update PCI succeeded, outcome: {outcome}")
+        logging.info(f"Update PCI succeeded, outcome: {outcome.to_json()}")
         return True
     except sdk.exceptions.ClientRuntimeError:
         logging.exception("Update PCI failed")
@@ -727,8 +888,8 @@ async def subscribe_mlb_changes(
 async def update_mlb_cio(
     e2_client: sdk.E2Client,
     e2_node_id: str,
-    cgi: CellGlobalId,
-    neighbor_cgi: CellGlobalId,
+    cgi: Cgi,
+    neighbor_cgi: Cgi,
     cell_individual_offset: int,
     q_offset: int,
 ) -> bool:
@@ -766,30 +927,30 @@ async def update_mlb_cio(
     # specify serving cell cgi, we're using the e2_node_id to specify serving
     # cell and using the header cgi to specify the neighbor's cell cgi.
     # TODO: update this code when/if service model is updated
-    hdr = E2SmRcPreControlHeader(
-        control_header_format1=E2SmRcPreControlHeaderFormat1(
-            rc_command=RcPreCommand.RC_PRE_COMMAND_SET_PARAMETERS,
-            cgi=neighbor_cgi,
-        )
+    hdr = E2SmRcControlHeader(
+        # control_header_format1=E2SmRcControlHeaderFormat1(
+        #     rc_command=RcCommand.RC_PRE_COMMAND_SET_PARAMETERS,
+        #     cgi=neighbor_cgi,
+        # )
     )
 
-    msg = E2SmRcPreControlMessage(
-        control_message=E2SmRcPreControlMessageFormat1(
-            parameter_type=RanparameterDefItem(
-                ran_parameter_id=RanparameterId(value=1),
-                ran_parameter_name=RanparameterName(value="ocn_rc"),
-                ran_parameter_type=RanparameterType.RANPARAMETER_TYPE_INTEGER,
-            ),
-            parameter_val=RanparameterValue(value_int=cell_individual_offset),
-        )
+    msg = E2SmRcControlMessage(
+        # control_message=E2SmRcControlMessageFormat1(
+        #     parameter_type=RanparameterItem(
+        #         ran_parameter_id=RanparameterId(value=1),
+        #         ran_parameter_name=RanparameterName(value="ocn_rc"),
+        #         ran_parameter_type=RanParameterType.RANPARAMETER_TYPE_INTEGER,
+        #     ),
+        #     parameter_val=RanparameterValue(value_int=cell_individual_offset),
+        # )
     )
 
     try:
         logging.info(f"MLB control: e2:{e2_node_id} hdr:{hdr} msg:{msg}")
         response = await e2_client.control(
             e2_node_id=e2_node_id,
-            service_model_name="oran-e2sm-rc-pre",
-            service_model_version="v2",
+            service_model_name="oran-e2sm-rc",
+            service_model_version="v1",
             header=bytes(hdr),
             message=bytes(msg),
         )
@@ -797,7 +958,7 @@ async def update_mlb_cio(
             logging.warning(f"Control ACK is set to `NO_ACK`, skipping...")
             return False
 
-        outcome = E2SmRcPreControlOutcome()
+        outcome = E2SmRcControlOutcome()
         outcome.parse(response)
         logging.info(f"Update CIO succeeded, outcome: {outcome}")
         return True
@@ -881,7 +1042,9 @@ async def set_pci_multi_handler(request: web.Request) -> web.Response:
     for result, (ncgi, args) in zip(results, args_list):
         pci = args["new_pci"]
         if isinstance(result, Exception):
-            resps["error"].append({"ncgi": hex(ncgi), "pci": pci, "msg": str(result)})
+            resps["error"].append(
+                {"ncgi": hex(ncgi), "pci": pci, "msg": str(repr(result))}
+            )
         else:
             # update_pci returns False if failed
             if result:

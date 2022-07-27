@@ -15,4 +15,3 @@ docker tag fb-kpimon-xapp:latest onosproject/fb-kpimon-xapp:latest
 docker push onosproject/ah-eson-test-server:latest
 docker push onosproject/fb-ah-xapp:latest
 docker push onosproject/fb-kpimon-xapp:latest
-
