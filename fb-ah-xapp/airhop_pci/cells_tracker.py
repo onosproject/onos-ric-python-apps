@@ -8,9 +8,7 @@ from dataclasses import dataclass, field
 from typing import Any, Optional, Dict, List, Tuple, Union
 import logging
 
-from onos_e2_sm.e2sm_rc_pre.v2 import (
-    BitString,
-)
+from onos_e2_sm.asn1.v1 import BitString
 
 from onos_e2_sm.e2sm_rc.v1 import (
     Cgi,

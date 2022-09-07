@@ -9,6 +9,7 @@ import asyncio
 import logging
 from operator import le
 from typing import Dict, Optional, Tuple
+import uuid
 
 from aiohttp import web
 
@@ -37,6 +38,12 @@ from onos_e2_sm.asn1.v1 import BitString
 
 # Messages
 from onos_e2_sm.e2sm_rc.v1 import (
+    E2SmRcEventTriggerFormat1,
+    E2SmRcEventTriggerFormat1Item,
+    EventTriggerUeInfo,
+    MessageTypeChoice,
+    MessageTypeChoiceNi,
+    MessageTypeChoiceRrc,
     E2SmRcEventTriggerFormat3,
     E2SmRcEventTriggerFormat3Item,
     RicEventTriggerConditionId,
@@ -46,8 +53,11 @@ from onos_e2_sm.e2sm_rc.v1 import (
     E2SmRcIndicationMessage,
     E2SmRcActionDefinition,
     E2SmRcActionDefinitionFormat1,
+    E2SmRcActionDefinitionFormat2,
+    E2SmRcActionDefinitionFormat2Item,
     E2SmRcActionDefinitionFormat1Item,
     RanparameterId,
+    RanParameterType,
     RicActionDefinitionFormats,
     RicStyleType,
     E2SmRcControlHeader,
@@ -62,10 +72,26 @@ from onos_e2_sm.e2sm_rc.v1 import (
     RanparameterStructureItem,
     RanparameterValueType,
     RanparameterValue,
-    RanparameterId,
     RanparameterValueTypeChoiceElementFalse,
+    RanparameterValueTypeChoiceElementTrue,
     RanparameterValueTypeChoiceStructure,
     E2SmRcControlOutcome,
+    RicPolicyAction,
+    RanparameterTesting,
+    RanparameterTestingItem,
+    RanparameterTestingCondition,
+    RicPolicyDecision,
+    RicPolicyActionRanparameterItem,
+    RanparameterTestingItemChoiceList,
+    RanparameterTestingList,
+    RanparameterTestingItemChoiceElementTrue,
+    RanparameterTestingItemChoiceElementFalse,
+    RanPChoiceComparison,
+    RrcMessageId,
+    RrcType,
+    RrcclassNr,
+    EventTriggerUeInfoItem,
+    RicEventTriggerUeId,
 )
 
 # Identifiers
@@ -91,30 +117,6 @@ from onos_e2_sm.e2sm_rc.v1 import (
     GnbCuCpUeE1ApId,
     GnbId,
 )
-
-
-# from onos_e2_sm.e2sm_rc_pre.v2 import (
-#     # subscription
-#     E2SmRcPreEventTriggerDefinition,
-#     E2SmRcPreEventTriggerDefinitionFormat1,
-#     E2SmRcPreIndicationHeader,
-#     E2SmRcPreIndicationMessage,
-#     RcPreTriggerType,
-#     # control
-#     CellGlobalId,
-#     E2SmRcPreControlHeader,
-#     E2SmRcPreControlHeaderFormat1,
-#     E2SmRcPreControlMessage,
-#     E2SmRcPreControlMessageFormat1,
-#     E2SmRcPreControlOutcome,
-#     RanparameterDefItem,
-#     # RanparameterId,
-#     RanparameterName,
-#     RanparameterType,
-#     RanparameterValue,
-#     RcPreCommand,
-#     RicControlMessagePriority,
-# )
 
 
 e2nodeInformationChangeID1CellConfigChange = 1
@@ -927,44 +929,187 @@ async def update_mlb_cio(
     # specify serving cell cgi, we're using the e2_node_id to specify serving
     # cell and using the header cgi to specify the neighbor's cell cgi.
     # TODO: update this code when/if service model is updated
-    hdr = E2SmRcControlHeader(
-        # control_header_format1=E2SmRcControlHeaderFormat1(
-        #     rc_command=RcCommand.RC_PRE_COMMAND_SET_PARAMETERS,
-        #     cgi=neighbor_cgi,
-        # )
+
+    message_1 = E2SmRcEventTriggerFormat1Item(
+        ric_event_trigger_condition_id=RicEventTriggerConditionId(value=1),
+        message_type=MessageTypeChoice(
+            message_type_choice_rrc=MessageTypeChoiceRrc(
+                r_rc_message=RrcMessageId(
+                    rrc_type=RrcType(nr=RrcclassNr.RRCCLASS_NR_U_L_DCCH),
+                    message_id=0,
+                )
+            )
+        ),
     )
 
-    msg = E2SmRcControlMessage(
-        # control_message=E2SmRcControlMessageFormat1(
-        #     parameter_type=RanparameterItem(
-        #         ran_parameter_id=RanparameterId(value=1),
-        #         ran_parameter_name=RanparameterName(value="ocn_rc"),
-        #         ran_parameter_type=RanParameterType.RANPARAMETER_TYPE_INTEGER,
-        #     ),
-        #     parameter_val=RanparameterValue(value_int=cell_individual_offset),
-        # )
+    trigger = E2SmRcEventTrigger(
+        ric_event_trigger_formats=RicEventTriggerFormats(
+            event_trigger_format3=E2SmRcEventTriggerFormat1(
+                message_list=[message_1],
+                global_associated_ueinfo=EventTriggerUeInfo(
+                    [
+                        EventTriggerUeInfoItem(
+                            event_trigger_ueid=RicEventTriggerUeId(value=2),
+                        )
+                    ]
+                ),
+            )
+        )
+    )
+
+    cell_specific_ocn_param_id = 10201
+
+    # policy_action_id = int(e2_node_id.encode('utf-8').hex())
+    policy_action_id = uuid.uuid1()
+
+    ad = E2SmRcActionDefinition(
+        ric_style_type=RicStyleType(value=1),
+        ric_action_definition_formats=RicActionDefinitionFormats(
+            action_definition_format2=E2SmRcActionDefinitionFormat2(
+                ric_policy_conditions_list=[
+                    E2SmRcActionDefinitionFormat2Item(
+                        ric_policy_action=RicPolicyAction(
+                            ric_policy_action_id=RicControlActionId(
+                                value=policy_action_id
+                            ),
+                            ran_parameters_list=[
+                                RicPolicyActionRanparameterItem(
+                                    ran_parameter_id=RanparameterId(value=4),
+                                    ran_parameter_value_type=RanparameterValueType(
+                                        ran_p_choice_element_false=RanparameterValueTypeChoiceElementFalse(
+                                            ran_parameter_value=RanparameterValue(
+                                                value_bit_s=neighbor_cgi.n_r_cgi
+                                            ),
+                                        )
+                                    ),
+                                ),
+                                RicPolicyActionRanparameterItem(
+                                    ran_parameter_id=RanparameterId(
+                                        value=cell_specific_ocn_param_id
+                                    ),
+                                    ran_parameter_value_type=RanparameterValueType(
+                                        ran_p_choice_element_false=RanparameterValueTypeChoiceElementFalse(
+                                            ran_parameter_value=RanparameterValue(
+                                                value_int=cell_individual_offset,
+                                            ),
+                                        )
+                                    ),
+                                ),
+                            ],
+                        ),
+                        ric_policy_condition_definition=RanparameterTesting(
+                            value=[
+                                [
+                                    RanparameterTestingItem(
+                                        ran_parameter_id=RanparameterId(value=4),
+                                        ran_parameter_type=RanParameterType(
+                                            ran_p_choice_list=RanparameterTestingItemChoiceList(
+                                                ran_parameter_list=RanparameterTestingList(
+                                                    RanparameterTestingItem(
+                                                        ran_parameter_id=4,
+                                                        ran_parameter_type=RanParameterType(
+                                                            ran_p_choice_element_true=RanparameterTestingItemChoiceElementFalse(
+                                                                ran_parameter_test_condition=RanparameterTestingCondition(
+                                                                    ran_p_choice_comparison=RanPChoiceComparison.RAN_P_CHOICE_COMPARISON_CONTAINS,
+                                                                ),
+                                                                ran_parameter_value=RanparameterValue(
+                                                                    value_bit_s=neighbor_cgi.n_r_cgi
+                                                                ),
+                                                            ),
+                                                        ),
+                                                    ),
+                                                    RanparameterTestingItem(
+                                                        ran_parameter_id=cell_specific_ocn_param_id,
+                                                        ran_parameter_type=RanParameterType(
+                                                            ran_p_choice_element_true=RanparameterTestingItemChoiceElementFalse(
+                                                                ran_parameter_test_condition=RanparameterTestingCondition(
+                                                                    ran_p_choice_comparison=RanPChoiceComparison.RAN_P_CHOICE_COMPARISON_DIFFERENCE,
+                                                                ),
+                                                                ran_parameter_value=RanparameterValue(
+                                                                    value_int=cell_individual_offset
+                                                                ),
+                                                            ),
+                                                        ),
+                                                    ),
+                                                )
+                                            )
+                                        ),
+                                    ),
+                                ]
+                            ]
+                        ),
+                    )
+                ],
+            )
+        ),
     )
 
     try:
-        logging.info(f"MLB control: e2:{e2_node_id} hdr:{hdr} msg:{msg}")
-        response = await e2_client.control(
+        async for (header, message) in e2_client.subscribe(
             e2_node_id=e2_node_id,
             service_model_name="oran-e2sm-rc",
             service_model_version="v1",
-            header=bytes(hdr),
-            message=bytes(msg),
-        )
-        if response is None:
-            logging.warning(f"Control ACK is set to `NO_ACK`, skipping...")
-            return False
+            subscription_id="fb-ah_oran-e2sm-rc-mlb",
+            trigger=bytes(trigger),
+            actions=[
+                Action(
+                    id=3,
+                    type=ActionType.ACTION_TYPE_POLICY,
+                    payload=bytes(ad),
+                ),
+            ],
+        ):
 
-        outcome = E2SmRcControlOutcome()
-        outcome.parse(response)
-        logging.info(f"Update CIO succeeded, outcome: {outcome}")
-        return True
+            if len(header) == 0 or len(message) == 0:
+                logging.warning(
+                    f"skipping empty indication header/message from '{e2_node_id}'..."
+                )
+                continue
+
+            ind_header = E2SmRcIndicationHeader().parse(header)
+            ind_message = E2SmRcIndicationMessage().parse(message)
+
+            logging.info(
+                f"Update CIO succeeded, outcome: \nHeader: {ind_header}\nMessage: {ind_message}"
+            )
+            return True
     except sdk.exceptions.ClientRuntimeError:
         logging.exception("Update CIO failed")
         return False
+
+    # hdr = E2SmRcControlHeader(control_header_format1=E2SmRcControlHeaderFormat1())
+
+    # msg = E2SmRcControlMessage(
+    #     # control_message=E2SmRcControlMessageFormat1(
+    #     #     parameter_type=RanparameterItem(
+    #     #         ran_parameter_id=RanparameterId(value=1),
+    #     #         ran_parameter_name=RanparameterName(value="ocn_rc"),
+    #     #         ran_parameter_type=RanParameterType.RANPARAMETER_TYPE_INTEGER,
+    #     #     ),
+    #     #     parameter_val=RanparameterValue(value_int=cell_individual_offset),
+    #     # )
+    # )
+
+    # try:
+    #     logging.info(f"MLB control: e2:{e2_node_id} hdr:{hdr} msg:{msg}")
+    #     response = await e2_client.control(
+    #         e2_node_id=e2_node_id,
+    #         service_model_name="oran-e2sm-rc",
+    #         service_model_version="v1",
+    #         header=bytes(hdr),
+    #         message=bytes(msg),
+    #     )
+    #     if response is None:
+    #         logging.warning(f"Control ACK is set to `NO_ACK`, skipping...")
+    #         return False
+
+    #     outcome = E2SmRcControlOutcome()
+    #     outcome.parse(response)
+    #     logging.info(f"Update CIO succeeded, outcome: {outcome}")
+    #     return True
+    # except sdk.exceptions.ClientRuntimeError:
+    #     logging.exception("Update CIO failed")
+    #     return False
 
 
 async def get_pci_handler(request: web.Request) -> web.Response:
