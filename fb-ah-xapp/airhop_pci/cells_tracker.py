@@ -8,14 +8,16 @@ from dataclasses import dataclass, field
 from typing import Any, Optional, Dict, List, Tuple, Union
 import logging
 
-from onos_e2_sm.e2sm_rc_pre.v2 import (
-    BitString,
-    CellGlobalId,
-    E2SmRcPreIndicationHeaderFormat1,
-    E2SmRcPreIndicationMessageFormat1,
+from onos_e2_sm.asn1.v1 import BitString
+
+from onos_e2_sm.e2sm_rc.v1 import (
+    Cgi,
+    NrCgi,
     NrcellIdentity,
-    Nrcgi,
-    PlmnIdentity,
+    Plmnidentity,
+    E2SmRcIndicationHeaderFormat1,
+    E2SmRcIndicationMessageFormat3,
+    E2SmRcIndicationMessageFormat3Item,
 )
 
 
@@ -94,7 +96,7 @@ def parse_nci_bitstring(bitstring: BitString) -> int:
     )
 
 
-def cgiFromNcgi(ncgi: int) -> CellGlobalId:
+def cgiFromNcgi(ncgi: int) -> Cgi:
     # ncgi = (plmnid << CELLID_BITWIDTH) | nci
 
     # nci bitwidth = CELLID_BITWIDTH
@@ -103,9 +105,9 @@ def cgiFromNcgi(ncgi: int) -> CellGlobalId:
     plmnid = (ncgi >> CELLID_BITWIDTH) & plmnid_mask
     nci_mask = (0x1 << CELLID_BITWIDTH) - 1
     nci = ncgi & nci_mask
-    return CellGlobalId(
-        nr_cgi=Nrcgi(
-            p_lmn_identity=PlmnIdentity(
+    return Cgi(
+        n_r_cgi=NrCgi(
+            p_lmnidentity=Plmnidentity(
                 value=int.to_bytes(plmnid, 3, byteorder="little")
             ),
             n_rcell_identity=NrcellIdentity(value=bytes_nci_bitstring(nci, bits=36)),
@@ -116,17 +118,15 @@ def cgiFromNcgi(ncgi: int) -> CellGlobalId:
 @dataclass
 class CellsState:
     """
-    given indication_message of E2SmRcPreIndicationMessageFormat1,
+    given indication_message of E2SmRcIndicationMessageFormat3,
     create dataclass of cell state
     """
 
-    indication_header: E2SmRcPreIndicationHeaderFormat1 = field(
+    indication_header: E2SmRcIndicationHeaderFormat1 = field(default=None, repr=False)
+    indication_message: E2SmRcIndicationMessageFormat3Item = field(
         default=None, repr=False
     )
-    indication_message: E2SmRcPreIndicationMessageFormat1 = field(
-        default=None, repr=False
-    )
-    cgi: CellGlobalId = field(init=False)
+    cgi: Cgi = field(init=False)
     ncgi: int = field(init=False)
     nci: int = field(init=False)
     e2_node_id: str = field(default="", repr=False)
@@ -144,28 +144,39 @@ class CellsState:
     height: float = field(default=0)
 
     def __post_init__(self):
-        self.cgi = self.indication_header.cgi
+
+        # logging.info("%s", self.indication_message.to_json())
+
+        self.cgi = self.indication_message.cell_global_id
         self.plmnid = int.from_bytes(
-            self.indication_header.cgi.nr_cgi.p_lmn_identity.value,
+            self.indication_message.cell_global_id.n_r_cgi.p_lmnidentity.value,
             byteorder="little",
             signed=False,
         )
         self.nci = parse_nci_bitstring(
-            self.indication_header.cgi.nr_cgi.n_rcell_identity.value
+            self.indication_message.cell_global_id.n_r_cgi.n_rcell_identity.value
         )
         self.ncgi = (self.plmnid << CELLID_BITWIDTH) | self.nci
-        self.pci = self.indication_message.pci.value
-        self.fcn = self.indication_message.dl_arfcn.nr_arfcn.value
+        self.pci = (
+            self.indication_message.neighbor_relation_table.serving_cell_pci.n_r.value
+        )
+        self.fcn = self.indication_message.neighbor_relation_table.serving_cell_arfcn
 
         self.neighbors: Dict[int, Tuple[int, int]] = {}  # maps ncgi -> (pci, fcn)
-        for n in self.indication_message.neighbors:
+        for (
+            n
+        ) in self.indication_message.neighbor_relation_table.neighbor_cell_list.value:
             n_plmnid = int.from_bytes(
-                n.cgi.nr_cgi.p_lmn_identity.value, byteorder="little", signed=False
+                n.ran_type_choice_nr.n_r_cgi.p_lmnidentity.value,
+                byteorder="little",
+                signed=False,
             )
-            n_nci = parse_nci_bitstring(n.cgi.nr_cgi.n_rcell_identity.value)
+            n_nci = parse_nci_bitstring(
+                n.ran_type_choice_nr.n_r_cgi.n_rcell_identity.value
+            )
             n_ncgi = (n_plmnid << CELLID_BITWIDTH) | n_nci
-            n_pci = n.pci.value
-            n_fcn = n.dl_arfcn.nr_arfcn.value
+            n_pci = n.ran_type_choice_nr.n_r_pci.value
+            n_fcn = n.ran_type_choice_nr.n_r_freq_info.nr_arfcn.n_rarfcn.real
             if n_ncgi in self.neighbors:
                 logging.error(
                     f"Cannot monitor cell, bad data in neighbors. "
@@ -247,52 +258,65 @@ class CellsTracker:
     def update(
         self,
         e2_node_id: str,
-        indication_header: E2SmRcPreIndicationHeaderFormat1,
-        indication_message: E2SmRcPreIndicationMessageFormat1,
-    ) -> CellChanges:
+        indication_header: E2SmRcIndicationHeaderFormat1,
+        indication_message: E2SmRcIndicationMessageFormat3,
+    ) -> List[CellChanges]:
         """
         given a new e2sm_rc_pre indication message,
         return list of change operations,
         such as new cells, added or removed neighbors
         """
-        cs = CellsState(
-            indication_header=indication_header,
-            indication_message=indication_message,
-            e2_node_id=e2_node_id,
-        )
 
-        try:
-            if cs.ncgi in self.ncgi_cells_map:
-                if cs.pci != self.ncgi_cells_map[cs.ncgi].pci:
-                    logging.debug(f"ncgi=0x{cs.ncgi:x} " f"update pci {cs.pci}")
-                    return CellChanges(
+        changes: List[CellChanges] = []
+
+        for cell_info in indication_message.cell_info_list:
+
+            cs = CellsState(
+                indication_header=indication_header,
+                indication_message=cell_info,
+                e2_node_id=e2_node_id,
+            )
+
+            try:
+                if cs.ncgi in self.ncgi_cells_map:
+                    if cs.pci != self.ncgi_cells_map[cs.ncgi].pci:
+                        logging.info(f"ncgi=0x{cs.ncgi:x} " f"update pci {cs.pci}")
+                        ch = CellChanges(
+                            ncgi=cs.ncgi,
+                            is_update=True,
+                            cell_to_register=cs,
+                        )
+                        changes.append(ch)
+
+                    neighbor_changes = self.ncgi_cells_map[cs.ncgi] ^ cs
+                    logging.info(
+                        f"ncgi=0x{cs.ncgi:x} already tracked, "
+                        f"neighbor_diff={neighbor_changes}"
+                    )
+                    changes.append(neighbor_changes)
+                else:
+                    logging.info(
+                        f"ncgi=0x{cs.ncgi:x} " f"pci={cs.pci} " f"tracking new {cs}"
+                    )
+
+                    ch = CellChanges(
                         ncgi=cs.ncgi,
-                        is_update=True,
+                        is_update=False,
                         cell_to_register=cs,
                     )
-                neighbor_changes = self.ncgi_cells_map[cs.ncgi] ^ cs
-                logging.debug(
-                    f"ncgi=0x{cs.ncgi:x} already tracked, "
-                    f"neighbor_diff={neighbor_changes}"
-                )
-                return neighbor_changes
+                    changes.append(ch)
 
-            logging.debug(f"ncgi=0x{cs.ncgi:x} " f"pci={cs.pci} " f"tracking new {cs}")
+            finally:
+                if cs.ncgi in self.ncgi_cells_map.keys():
+                    cs.lat = self.ncgi_cells_map[cs.ncgi].lat
+                    cs.lng = self.ncgi_cells_map[cs.ncgi].lng
+                    cs.azimuth = self.ncgi_cells_map[cs.ncgi].azimuth
+                    cs.tilt = self.ncgi_cells_map[cs.ncgi].tilt
+                    cs.arc_width = self.ncgi_cells_map[cs.ncgi].arc_width
+                    cs.height = self.ncgi_cells_map[cs.ncgi].height
+                self.ncgi_cells_map[cs.ncgi] = cs
 
-            return CellChanges(
-                ncgi=cs.ncgi,
-                is_update=False,
-                cell_to_register=cs,
-            )
-        finally:
-            if cs.ncgi in self.ncgi_cells_map.keys():
-                cs.lat = self.ncgi_cells_map[cs.ncgi].lat
-                cs.lng = self.ncgi_cells_map[cs.ncgi].lng
-                cs.azimuth = self.ncgi_cells_map[cs.ncgi].azimuth
-                cs.tilt = self.ncgi_cells_map[cs.ncgi].tilt
-                cs.arc_width = self.ncgi_cells_map[cs.ncgi].arc_width
-                cs.height = self.ncgi_cells_map[cs.ncgi].height
-            self.ncgi_cells_map[cs.ncgi] = cs
+        return changes
 
     def get_pci(self, ncgi: int) -> int:
         """
@@ -301,7 +325,7 @@ class CellsTracker:
         """
         return self.ncgi_cells_map[ncgi].pci
 
-    def get_cgi(self, ncgi: int) -> CellGlobalId:
+    def get_cgi(self, ncgi: int) -> Cgi:
         """
         returns cgi given ncgi
         throws exception if ncgi had not been seen before
